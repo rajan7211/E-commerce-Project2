@@ -24,7 +24,7 @@ AppDataSource.initialize()
     });
   })
   .catch((err) => {
-    console.log("Database connection failed:", err);
+    ("Database connection failed:", err);
   });
 
 
