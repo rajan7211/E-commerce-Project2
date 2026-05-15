@@ -1,44 +1,78 @@
-import { otpVerification } from "./OtpVerification";
+import { UserRole } from "../utils/enums";
+import bcrypt from "bcrypt";
+
 import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
   OneToMany,
-
+  OneToOne,
+  CreateDateColumn,
+  UpdateDateColumn,
+  BeforeInsert,
+  BeforeUpdate,
 } from "typeorm";
 
+import { Address } from "./Address";
+import { Cart } from "./Cart";
+import { Order } from "./Order";
+import { Store } from "./Store";
 
-@Entity ('users') 
+@Entity("users")
 export class User {
-    @PrimaryGeneratedColumn()
-    id : number;
 
-@Column({ unique : true})
-user_email : string;
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column()
+  first_name: string;
+
+  @Column()
+  last_name: string;
+
+  @Column({ unique: true })
+  user_email: string;
+
+  @Column()
+  user_pass: string;
+
+  @Column({
+    type: "enum",
+    enum: UserRole,
+    default: UserRole.CUSTOMER,
+  })
+  role: UserRole;
+
+  @OneToMany(() => Address, (address) => address.user)
+  addresses: Address[];
+
+  @OneToOne(() => Cart, (cart) => cart.user)
+  cart: Cart;
+
+  @OneToMany(() => Order, (order) => order.user)
+  orders: Order[];
+
+  @OneToMany(() => Store, (store) => store.user)
+  stores: Store[];
+
+  @CreateDateColumn()
+  created_at: Date;
+
+  @UpdateDateColumn()
+  updated_at: Date;
+
+  @BeforeInsert()
+  @BeforeUpdate()
+  async hashPassword() {
+    if (this.user_pass && !this.user_pass.startsWith("$2b$")) {
+      this.user_pass = await bcrypt.hash(this.user_pass, 10);
+    }
+  }
 
 
-@Column({ unique : true})
-user_pass : string;
-
-
-@Column({ unique : true})
-phone_number : string;
-
-
-@Column({ type: 'enum', enum: 
-    ['user', 'seller' , 'admin'],
-    default : 'user'})
-     role : string;
-
-@Column ({default : false})
-is_verified: boolean;
-
-@Column ({default : ()=> 'CURRENT_TIMESTAMP'})
-    created_at : Date;
-
-@OneToMany(()=> otpVerification, (otp) => otp.user)
-otps: otpVerification[];
-
+  async validatePassword(password: string): Promise<boolean> {
+    return bcrypt.compare(password, this.user_pass);
+  }
 
 }
 
