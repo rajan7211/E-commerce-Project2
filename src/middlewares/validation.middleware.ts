@@ -1,4 +1,3 @@
-
 import { ObjectSchema } from "joi"
 import { validationMessages } from "../validations/messages";
 import { Request, Response, NextFunction } from "express";
@@ -20,7 +19,7 @@ export const validateRequest = (schema: ObjectSchema) => {
   
      return res.status(400).json({
         success : false,
-        message : validationMessages.general.validationFailed,
+        message : validationMessages.GENERAL.validationFailed,
         errors, 
          })
  }

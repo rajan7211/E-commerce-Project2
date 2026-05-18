@@ -17,6 +17,7 @@ import { Address } from "./Address";
 import { Cart } from "./Cart";
 import { Order } from "./Order";
 import { Store } from "./Store";
+import { Otpverification } from "./otpVerification";
 
 @Entity("users")
 export class User {
@@ -36,12 +37,21 @@ export class User {
   @Column()
   user_pass: string;
 
+
+@Column({ default : false})
+is_verified : boolean;
+
+
   @Column({
     type: "enum",
     enum: UserRole,
     default: UserRole.CUSTOMER,
   })
   role: UserRole;
+
+  @OneToMany(()=> Otpverification , (otp)=> otp.user)
+  otps : Otpverification[];
+
 
   @OneToMany(() => Address, (address) => address.user)
   addresses: Address[];
@@ -75,6 +85,16 @@ export class User {
   }
 
 }
+
+
+
+
+
+
+
+
+
+
 
 
 
