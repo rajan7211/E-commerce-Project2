@@ -40,12 +40,6 @@ export interface RegisterResponse {
   is_verified: boolean;
 }
 
-export interface LoginResponse {
-  user: UserPayload;
-  tokens: {
-    accessToken: string;
-  };
-}
 
 export interface OtpResponse {
   message: string;
@@ -59,6 +53,12 @@ export interface VerifyOtpResponse {
 }
 
 
+export interface LoginResponse {
+  user: UserPayload;
+  tokens: {
+    accessToken: string;
+  };
+}
 
 
 

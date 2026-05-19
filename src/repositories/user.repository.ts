@@ -10,9 +10,6 @@ export class UserRepository {
     this.repository = AppDataSource.getRepository(User);
   }
 
-  /**
-   * Create new user
-   */
   async create(userData: {
     first_name: string;
     last_name: string;
@@ -32,27 +29,21 @@ export class UserRepository {
     return await this.repository.save(user);
   }
 
-  /**
-   * Find user by email
-   */
+ 
   async findByEmail(email: string): Promise<User | null> {
     return await this.repository.findOne({
       where: { user_email: email },
     });
   }
 
-  /**
-   * Find user by ID
-   */
+
   async findById(id: number): Promise<User | null> {
     return await this.repository.findOne({
       where: { id },
     });
   }
 
-  /**
-   * Update user verification status
-   */
+
   async verifyUser(userId: number): Promise<User> {
     await this.repository.update(userId, { is_verified: true });
     const user = await this.findById(userId);
@@ -62,9 +53,6 @@ export class UserRepository {
     return user;
   }
 
-  /**
-   * Check if email exists
-   */
   async emailExists(email: string): Promise<boolean> {
     const count = await this.repository.count({
       where: { user_email: email },
@@ -72,9 +60,7 @@ export class UserRepository {
     return count > 0;
   }
 
-  /**
-   * Get user with OTP relations
-   */
+
   async findByEmailWithOtps(email: string): Promise<User | null> {
     return await this.repository.findOne({
       where: { user_email: email },
@@ -82,9 +68,7 @@ export class UserRepository {
     });
   }
 
-  /**
-   * Update user details
-   */
+
   async update(userId: number, data: Partial<User>): Promise<User> {
     await this.repository.update(userId, data);
     const user = await this.findById(userId);
@@ -94,6 +78,16 @@ export class UserRepository {
     return user;
   }
 }
+
+
+
+
+
+
+
+
+
+
 
 
 

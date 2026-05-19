@@ -10,9 +10,6 @@ export class OtpRepository {
     this.repository = AppDataSource.getRepository(Otpverification);
   }
 
-  /**
-   * Create new OTP
-   */
   async create(user: User, otpCode: string, expiresAt: Date): Promise<Otpverification> {
     const otp = this.repository.create({
       user,
@@ -24,9 +21,7 @@ export class OtpRepository {
     return await this.repository.save(otp);
   }
 
-  /**
-   * Find valid OTP for user
-   */
+
   async findValidOtp(userId: number, otpCode: string): Promise<Otpverification | null> {
     return await this.repository
       .createQueryBuilder("otp")
@@ -39,16 +34,12 @@ export class OtpRepository {
       .getOne();
   }
 
-  /**
-   * Mark OTP as used
-   */
+
   async markAsUsed(otpId: number): Promise<void> {
     await this.repository.update(otpId, { is_used: true });
   }
 
-  /**
-   * Invalidate all previous OTPs for user
-   */
+
   async invalidatePreviousOtps(userId: number): Promise<void> {
     await this.repository
       .createQueryBuilder()
@@ -59,18 +50,14 @@ export class OtpRepository {
       .execute();
   }
 
-  /**
-   * Delete expired OTPs (cleanup)
-   */
+
   async deleteExpiredOtps(): Promise<void> {
     await this.repository.delete({
       expires_at: LessThan(new Date()),
     });
   }
 
-  /**
-   * Get latest OTP for user
-   */
+
   async getLatestOtpForUser(userId: number): Promise<Otpverification | null> {
     return await this.repository.findOne({
       where: { user: { id: userId }, is_used: false },
@@ -78,6 +65,10 @@ export class OtpRepository {
     });
   }
 }
+
+
+
+
 
 
 

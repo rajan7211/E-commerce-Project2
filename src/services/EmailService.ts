@@ -1,9 +1,7 @@
 import { transporter } from "../config/smtp";
 
 export class EmailService {
-  /**
-   * Get OTP email template
-   */
+
   private getOtpTemplate(otp: string, firstName: string): string {
     const formattedOtp = otp.split("").join(" ");
     
@@ -21,9 +19,6 @@ export class EmailService {
     `;
   }
 
-  /**
-   * Get welcome email template
-   */
   private getWelcomeTemplate(firstName: string): string {
     return `
     <div style="font-family: Arial; padding: 20px; background: #f4f4f4;">
@@ -37,9 +32,7 @@ export class EmailService {
     `;
   }
 
-  /**
-   * Send OTP email
-   */
+
   async sendOtpEmail(email: string, firstName: string, otp: string): Promise<void> {
     const mailOptions = {
       from: `"E-commerce" <${process.env.SMTP_USER}>`,
@@ -51,9 +44,7 @@ export class EmailService {
     await transporter.sendMail(mailOptions);
   }
 
-  /**
-   * Send welcome email after verification
-   */
+ 
   async sendWelcomeEmail(email: string, firstName: string): Promise<void> {
     const mailOptions = {
       from: `"E-commerce" <${process.env.SMTP_USER}>`,

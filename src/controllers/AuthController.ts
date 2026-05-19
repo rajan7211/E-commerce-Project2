@@ -4,7 +4,6 @@ import { ResponseMessage } from "../enums/response-message.enum";
 import { HttpStatus } from "../enums/http-status.enum";
 import {
   RegisterRequestBody,
-  LoginRequestBody,
   VerifyOtpRequestBody,
   ResendOtpRequestBody,
 } from "../Interfaces/auth.interface";
@@ -12,10 +11,7 @@ import {
 const authService = new AuthService();
 
 export class AuthController {
-  /**
-   * Register new user
-   * POST /auth/register
-   */
+
   static async register(req: Request, res: Response) {
     try {
       const data: RegisterRequestBody = req.body;
@@ -39,10 +35,7 @@ export class AuthController {
     }
   }
 
-  /**
-   * Verify OTP
-   * POST /auth/verify-otp
-   */
+
   static async verifyOtp(req: Request, res: Response) {
     try {
       const { email, otp }: VerifyOtpRequestBody = req.body;
@@ -61,10 +54,7 @@ export class AuthController {
     }
   }
 
-  /**
-   * Resend OTP
-   * POST /auth/resend-otp
-   */
+
   static async resendOtp(req: Request, res: Response) {
     try {
       const { email }: ResendOtpRequestBody = req.body;
@@ -83,35 +73,18 @@ export class AuthController {
     }
   }
 
-  /**
-   * Login user
-   * POST /auth/login
-   */
-  static async login(req: Request, res: Response) {
-    try {
-      const data: LoginRequestBody = req.body;
 
-      const result = await authService.login(data);
-
-      res.status(result.statusCode).json({
-        success: result.success,
-        message: result.message,
-        data: result.data,
-      });
-    } catch (error: any) {
-      const statusCode = error.message === ResponseMessage.EMAIL_NOT_VERIFIED
-        ? HttpStatus.FORBIDDEN
-        : error.message === ResponseMessage.INVALID_CREDENTIALS
-        ? HttpStatus.UNAUTHORIZED
-        : HttpStatus.BAD_REQUEST;
-
-      res.status(statusCode).json({
-        success: false,
-        message: error.message,
-      });
-    }
-  }
 }
+
+
+
+
+
+
+
+
+
+
 
 
 

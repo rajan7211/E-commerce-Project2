@@ -26,11 +26,6 @@ router.post(
 );
 
 
-router.post(
-  "/login",
-  validateRequest(authValidation.login),
-  AuthController.login
-);
 
 export default router;
 
