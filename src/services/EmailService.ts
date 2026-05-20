@@ -44,7 +44,7 @@ export class EmailService {
     await transporter.sendMail(mailOptions);
   }
 
- 
+
   async sendWelcomeEmail(email: string, firstName: string): Promise<void> {
     const mailOptions = {
       from: `"Support Team_Ronak" <${process.env.SMTP_USER}>`,

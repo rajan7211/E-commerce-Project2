@@ -2,13 +2,17 @@ import { Request, Response } from "express";
 import { AuthService } from "../services/AuthService";
 import { ResponseMessage } from "../enums/response-message.enum";
 import { HttpStatus } from "../enums/http-status.enum";
+import { OtpService } from "../services/OtpService";
 import {
   RegisterRequestBody,
   VerifyOtpRequestBody,
   ResendOtpRequestBody,
+  LoginRequestBody,
 } from "../Interfaces/auth.interface";
+import { request } from "node:http";
 
 const authService = new AuthService();
+const otpService = new OtpService();
 
 export class AuthController {
 
@@ -40,7 +44,7 @@ export class AuthController {
     try {
       const { email, otp }: VerifyOtpRequestBody = req.body;
 
-      const result = await authService.verifyOtp(email, otp);
+      const result = await otpService.verifyOtp(email, otp);
 
       res.status(result.statusCode).json({
         success: result.success,
@@ -59,7 +63,7 @@ export class AuthController {
     try {
       const { email }: ResendOtpRequestBody = req.body;
 
-      const result = await authService.resendOtp(email);
+      const result = await otpService.resendOtp(email);
 
       res.status(result.statusCode).json({
         success: result.success,
@@ -76,6 +80,10 @@ export class AuthController {
 
 }
 
+
+
+
+// login user 
 
 
 

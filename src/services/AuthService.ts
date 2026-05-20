@@ -1,26 +1,26 @@
 import { UserRepository } from "../repositories/user.repository";
-import { OtpRepository } from "../repositories/otp.repository";
+import { OtpService } from "./OtpService";
 import { EmailService } from "./EmailService";
 import { JwtUtil } from "../utils/jwt.util";
-import { OtpUtil } from "../utils/otp.util";
 import { UserRole } from "../utils/enums";
 import { ResponseMessage } from "../enums/response-message.enum";
 import { HttpStatus } from "../enums/http-status.enum";
 import {
+  LoginRequestBody,
+  LoginResponse,
   RegisterRequestBody,
   RegisterResponse,
+
 } from "../Interfaces/auth.interface";
 import { ServiceResponse } from "../Interfaces/service-response.interface";
 import { createError } from "../middlewares/error-handler.middleware";
-
-
+import { email } from "zod";
+import { verify } from "node:crypto";
 
 
 export class AuthService {
   private userRepository: UserRepository = new UserRepository();
-  private otpRepository : OtpRepository = new OtpRepository();
-  private emailService : EmailService = new EmailService();
-
+  private otpService: OtpService = new OtpService();
 
    async register(data : RegisterRequestBody): Promise<ServiceResponse<RegisterResponse>> {
     const normalizedEmail = data.email.toLowerCase().trim();
@@ -40,128 +40,85 @@ export class AuthService {
       role :data.role || UserRole.CUSTOMER,
     });
 
-    const otpCode = OtpUtil.generateOtp();
-    const otpExpiry = OtpUtil.getOtpExpiry();
 
-//save otp
-    await this.otpRepository.create(user, otpCode , otpExpiry);
-
-//send otp
-
-await this.emailService.sendOtpEmail(user.user_email, user.first_name, otpCode);
+    await this.otpService.generateAndSendOtp(user);
 
     return {
-      success: true,
-      message: ResponseMessage.REGISTRATION_SUCCESS,
-      data: {
-        email: user.user_email,
-        first_name: user.first_name,
-        last_name: user.last_name,
-        is_verified: user.is_verified,
+      success  : true,
+      message : ResponseMessage.REGISTRATION_SUCCESS,
+      data : {
+        email : user.user_email,
+        first_name : user.first_name,
+        last_name : user.last_name,
+        is_verified : user.is_verified,
       },
-      statusCode: HttpStatus.CREATED,
+
+      statusCode : HttpStatus.CREATED
     };
   }
 
 
-// verify otp
 
- async verifyOtp(email : string,  otp : string): Promise<ServiceResponse> {
-  const normalizedEmail = email.toLowerCase().trim();
-
-
-  const user  = await this.userRepository.findByEmail(normalizedEmail);
-  if(!user) {
-    throw createError(ResponseMessage.EMAIL_NOT_FOUND, HttpStatus.NOT_FOUND);
-  }
-
-
-  if (user.is_verified) {
-    return {
-      success : true,
-      message : "email already verified. you can login now",
-      statusCode : HttpStatus.OK,
-    };
-  }
-
-
-// find valid otp
-
-const otpRecord= await this.otpRepository.findValidOtp(user.id, otp);
-if (!otpRecord) {
-  throw createError (ResponseMessage.OTP_INVALID, HttpStatus.BAD_REQUEST);
-}
-
-if (OtpUtil.isOtpExpired(otpRecord.expires_at)) {
-  throw createError(
-    ResponseMessage.OTP_ALREADY_USED , 
-    HttpStatus.BAD_REQUEST);
-}
-  if (otpRecord.is_used) {
-    throw createError (ResponseMessage.OTP_ALREADY_USED, HttpStatus.BAD_REQUEST);
-  }
-
-  await this.otpRepository.markAsUsed(otpRecord.id);
-
-  await this.userRepository.verifyUser(user.id);
-
-  this.emailService.sendWelcomeEmail(user.user_email, user.first_name).catch((err)=> 
-    console.log("email error:", err));
+  // login 
   
-   return {
-    success : true,
-    message : ResponseMessage.OTP_VERIFIED,
-    statusCode : HttpStatus.OK
-   };
+  async login(data : LoginRequestBody) : Promise<ServiceResponse<LoginResponse>> {
+    const normalizedEmail = data.email.toLowerCase().trim();
 
- }
+    const user = await this.userRepository.findByEmail(normalizedEmail);
+    if(!user) {
+      throw createError(ResponseMessage.INVALID_CREDENTIALS,
+        HttpStatus.UNAUTHORIZED);
 
-// resend otp
+    }
 
- async resendOtp(email : string): Promise<ServiceResponse> {
-   const normalizedEmail = email.toLowerCase().trim();
 
-  //  find user 
-  const user = await this.userRepository.findByEmail(normalizedEmail);
-  if(!user) {
-    throw createError (ResponseMessage.USER_NOT_FOUND, HttpStatus.NOT_FOUND);
+// validate pass 
+
+
+    const isPasswordValid = await user.validatePassword(data.password);
+    if (!isPasswordValid) {
+      throw createError(ResponseMessage.INVALID_CREDENTIALS, HttpStatus.UNAUTHORIZED);
+    }
+
+
+// check email is already verified
+
+
+    if(!user.is_verified) {
+      throw createError(ResponseMessage.EMAIL_NOT_VERIFIED , HttpStatus.FORBIDDEN)
+    }
+
+
+    // generate JWT token 
+
+    const tokens = JwtUtil.generateTokens({
+      userId : user.id,
+      email : user.user_email,
+      role : user.role,
+      is_verified : user.is_verified,
+    });
+
+    
+return {
+      success: true,
+      message: ResponseMessage.LOGIN_SUCCESS,
+      data: {
+        user: {
+          id: user.id,
+          first_name: user.first_name,
+          last_name: user.last_name,
+          email: user.user_email,
+          role: user.role,
+          is_verified: user.is_verified,
+          created_at: user.created_at,
+        },
+        tokens,
+      },
+      statusCode: HttpStatus.OK,
+    };
+
   }
-
-  if (user.is_verified) {
-    throw createError("email already verified. please login account" , HttpStatus.BAD_REQUEST);
-  }
-
- await this.otpRepository.invalidatePreviousOtps(user.id);
-
- const otpCode = OtpUtil.generateOtp();
- const otpExpiry = OtpUtil.getOtpExpiry();
-
-
- await this.otpRepository.create(user , otpCode, otpExpiry);
-
- await this.emailService.sendOtpEmail(user.user_email , user.first_name , otpCode);
-
- return {
-  success : true,
-  message : ResponseMessage.OTP_SENT,
-  statusCode : HttpStatus.OK,
- };
- } 
-
-
-
-
-
-
 }
-
-
-
-
-
-
-
-
 
 
 
