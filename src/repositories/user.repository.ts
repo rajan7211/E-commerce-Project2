@@ -4,11 +4,7 @@ import { User } from "../entities/User";
 import { UserRole } from "../utils/enums";
 
 export class UserRepository {
-  private repository: Repository<User>;
-
-  constructor() {
-    this.repository = AppDataSource.getRepository(User);
-  }
+  private repository: Repository<User> = AppDataSource.getRepository(User);
 
   async create(userData: {
     first_name: string;
@@ -29,20 +25,18 @@ export class UserRepository {
     return await this.repository.save(user);
   }
 
- 
+
   async findByEmail(email: string): Promise<User | null> {
     return await this.repository.findOne({
       where: { user_email: email },
     });
   }
 
-
   async findById(id: number): Promise<User | null> {
     return await this.repository.findOne({
       where: { id },
     });
   }
-
 
   async verifyUser(userId: number): Promise<User> {
     await this.repository.update(userId, { is_verified: true });
@@ -60,14 +54,13 @@ export class UserRepository {
     return count > 0;
   }
 
-
+  
   async findByEmailWithOtps(email: string): Promise<User | null> {
     return await this.repository.findOne({
       where: { user_email: email },
       relations: ["otps"],
     });
   }
-
 
   async update(userId: number, data: Partial<User>): Promise<User> {
     await this.repository.update(userId, data);
@@ -78,6 +71,8 @@ export class UserRepository {
     return user;
   }
 }
+
+
 
 
 

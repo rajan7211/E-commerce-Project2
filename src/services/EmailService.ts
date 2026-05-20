@@ -35,7 +35,7 @@ export class EmailService {
 
   async sendOtpEmail(email: string, firstName: string, otp: string): Promise<void> {
     const mailOptions = {
-      from: `"E-commerce" <${process.env.SMTP_USER}>`,
+      from: `"Support Team_Ronak" <${process.env.SMTP_USER}>`,
       to: email,
       subject: "Email Verification OTP",
       html: this.getOtpTemplate(otp, firstName),
@@ -47,7 +47,7 @@ export class EmailService {
  
   async sendWelcomeEmail(email: string, firstName: string): Promise<void> {
     const mailOptions = {
-      from: `"E-commerce" <${process.env.SMTP_USER}>`,
+      from: `"Support Team_Ronak" <${process.env.SMTP_USER}>`,
       to: email,
       subject: "Welcome to Our Platform!",
       html: this.getWelcomeTemplate(firstName),
@@ -60,6 +60,16 @@ export class EmailService {
     }
   }
 }
+
+
+
+
+
+
+
+
+
+
 
 
 

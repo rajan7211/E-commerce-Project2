@@ -1,14 +1,10 @@
-import { Repository, LessThan, MoreThan } from "typeorm";
+import { Repository, LessThan } from "typeorm";
 import { AppDataSource } from "../config/data-source";
 import { Otpverification } from "../entities/otpVerification";
 import { User } from "../entities/User";
 
 export class OtpRepository {
-  private repository: Repository<Otpverification>;
-
-  constructor() {
-    this.repository = AppDataSource.getRepository(Otpverification);
-  }
+  private repository: Repository<Otpverification> = AppDataSource.getRepository(Otpverification);
 
   async create(user: User, otpCode: string, expiresAt: Date): Promise<Otpverification> {
     const otp = this.repository.create({
@@ -20,7 +16,6 @@ export class OtpRepository {
 
     return await this.repository.save(otp);
   }
-
 
   async findValidOtp(userId: number, otpCode: string): Promise<Otpverification | null> {
     return await this.repository
@@ -34,11 +29,9 @@ export class OtpRepository {
       .getOne();
   }
 
-
   async markAsUsed(otpId: number): Promise<void> {
     await this.repository.update(otpId, { is_used: true });
   }
-
 
   async invalidatePreviousOtps(userId: number): Promise<void> {
     await this.repository
@@ -50,13 +43,11 @@ export class OtpRepository {
       .execute();
   }
 
-
   async deleteExpiredOtps(): Promise<void> {
     await this.repository.delete({
       expires_at: LessThan(new Date()),
     });
   }
-
 
   async getLatestOtpForUser(userId: number): Promise<Otpverification | null> {
     return await this.repository.findOne({
@@ -65,9 +56,6 @@ export class OtpRepository {
     });
   }
 }
-
-
-
 
 
 

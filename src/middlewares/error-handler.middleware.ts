@@ -2,27 +2,17 @@ import { Request, Response, NextFunction } from "express";
 import { HttpStatus } from "../enums/http-status.enum";
 import { ResponseMessage } from "../enums/response-message.enum";
 
-export class AppError extends Error {
-  statusCode: number;
-  isOperational: boolean;
-
-  constructor(message: string, statusCode: number) {
-    super(message);
-    this.statusCode = statusCode;
-    this.isOperational = true;
-    Error.captureStackTrace(this, this.constructor);
-  }
-}
 
 export const errorHandler = (
-  err: Error | AppError,
+  err: any,
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  console.error("Error:", err);
+  console.error("Error:", err.message || err);
 
-  if (err instanceof AppError) {
+
+  if (err.statusCode) {
     return res.status(err.statusCode).json({
       success: false,
       message: err.message,
@@ -43,12 +33,22 @@ export const errorHandler = (
     });
   }
 
+
+  if (err.name === "QueryFailedError") {
+    return res.status(HttpStatus.BAD_REQUEST).json({
+      success: false,
+      message: "Database error",
+    });
+  }
+
+ 
   return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
     success: false,
     message: ResponseMessage.INTERNAL_ERROR,
     ...(process.env.NODE_ENV === "development" && { error: err.message }),
   });
 };
+
 
 export const asyncHandler = (fn: Function) => {
   return (req: Request, res: Response, next: NextFunction) => {
@@ -57,15 +57,11 @@ export const asyncHandler = (fn: Function) => {
 };
 
 
-
-
-
-
-
-
-
-
-
+export const createError = (message: string, statusCode: number) => {
+  const error = new Error(message);
+  (error as any).statusCode = statusCode;
+  return error;
+};
 
 
 
