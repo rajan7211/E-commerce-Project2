@@ -1,99 +1,105 @@
 import { Request, Response } from "express";
-import { AuthService } from "../services/AuthService";
-import { ResponseMessage } from "../enums/response-message.enum";
-import { HttpStatus } from "../enums/http-status.enum";
-import { OtpService } from "../services/OtpService";
+import { register as registerService, login as loginService } from "../services/AuthService";
+import { verifyOtp as verifyOtpService, resendOtp as resendOtpService } from "../services/OtpService";
 import {
   RegisterRequestBody,
+  LoginRequestBody,
   VerifyOtpRequestBody,
   ResendOtpRequestBody,
-  LoginRequestBody,
 } from "../Interfaces/auth.interface";
-import { request } from "node:http";
 
-const authService = new AuthService();
-const otpService = new OtpService();
 
-export class AuthController {
+// REGISTER USER
 
-  static async register(req: Request, res: Response) {
-    try {
-      const data: RegisterRequestBody = req.body;
+export const register = async (req: Request, res: Response) => {
+  try {
+    const data: RegisterRequestBody = req.body;
 
-      const result = await authService.register(data);
+    const result = await registerService(data);
 
-      res.status(result.statusCode).json({
-        success: result.success,
-        message: result.message,
-        data: result.data,
-      });
-    } catch (error: any) {
-      const statusCode = error.message === ResponseMessage.EMAIL_ALREADY_EXISTS 
-        ? HttpStatus.CONFLICT 
-        : HttpStatus.BAD_REQUEST;
+    res.status(result.statusCode).json({
+      success: result.success,
+      message: result.message,
+      data: result.data,
+    });
+  } catch (error: any) {
+    const statusCode = error.statusCode || 400;
 
-      res.status(statusCode).json({
-        success: false,
-        message: error.message,
-      });
-    }
+    res.status(statusCode).json({
+      success: false,
+      message: error.message,
+    });
   }
+};
 
 
-  static async verifyOtp(req: Request, res: Response) {
-    try {
-      const { email, otp }: VerifyOtpRequestBody = req.body;
+// VERIFY OTP
 
-      const result = await otpService.verifyOtp(email, otp);
+export const verifyOtp = async (req: Request, res: Response) => {
+  try {
+    const { email, otp }: VerifyOtpRequestBody = req.body;
 
-      res.status(result.statusCode).json({
-        success: result.success,
-        message: result.message,
-      });
-    } catch (error: any) {
-      res.status(HttpStatus.BAD_REQUEST).json({
-        success: false,
-        message: error.message,
-      });
-    }
+    const result = await verifyOtpService(email, otp);
+
+    res.status(result.statusCode).json({
+      success: result.success,
+      message: result.message,
+    });
+  } catch (error: any) {
+    const statusCode = error.statusCode || 400;
+
+    res.status(statusCode).json({
+      success: false,
+      message: error.message,
+    });
   }
+};
 
 
-  static async resendOtp(req: Request, res: Response) {
-    try {
-      const { email }: ResendOtpRequestBody = req.body;
+// RESEND OTP
 
-      const result = await otpService.resendOtp(email);
+export const resendOtp = async (req: Request, res: Response) => {
+  try {
+    const { email }: ResendOtpRequestBody = req.body;
 
-      res.status(result.statusCode).json({
-        success: result.success,
-        message: result.message,
-      });
-    } catch (error: any) {
-      res.status(HttpStatus.BAD_REQUEST).json({
-        success: false,
-        message: error.message,
-      });
-    }
+    const result = await resendOtpService(email);
+
+    res.status(result.statusCode).json({
+      success: result.success,
+      message: result.message,
+    });
+  } catch (error: any) {
+    const statusCode = error.statusCode || 400;
+
+    res.status(statusCode).json({
+      success: false,
+      message: error.message,
+    });
   }
+};
 
+// LOGIN USER
 
-}
+export const login = async (req: Request, res: Response) => {
+  try {
+    const data: LoginRequestBody = req.body;
 
+    const result = await loginService(data);
 
+    res.status(result.statusCode).json({
+      success: result.success,
+      message: result.message,
+      data: result.data,
+    });
+  } catch (error: any) {
+    const statusCode = error.statusCode || 400;
 
-
-// login user 
-
-
-
-
-
-
-
-
-
-
+    res.status(statusCode).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
 
 
 

@@ -49,7 +49,8 @@ is_verified : boolean;
   })
   role: UserRole;
 
-  @OneToMany(()=> Otpverification , (otp)=> otp.user)
+  @OneToMany(()=> Otpverification , (otp)=> otp.user, { onDelete:
+    "CASCADE"})
   otps : Otpverification[];
 
 

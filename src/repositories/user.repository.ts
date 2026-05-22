@@ -3,89 +3,118 @@ import { AppDataSource } from "../config/data-source";
 import { User } from "../entities/User";
 import { UserRole } from "../utils/enums";
 
-export class UserRepository {
-  private repository: Repository<User> = AppDataSource.getRepository(User);
 
-  async create(userData: {
+const getRepository =() : Repository<User> => {
+  return AppDataSource.getRepository(User);
+};
+
+
+export const create = async (userData: {
     first_name: string;
-    last_name: string;
-    user_email: string;
-    user_pass: string;
-    role?: UserRole;
-  }): Promise<User> {
-    const user = this.repository.create({
-      first_name: userData.first_name,
-      last_name: userData.last_name,
-      user_email: userData.user_email,
-      user_pass: userData.user_pass,
-      role: userData.role || UserRole.CUSTOMER,
-      is_verified: false,
-    });
+  last_name: string;
+  user_email: string;
+  user_pass: string;
+  role?: UserRole;
+}) : Promise<User> => {
+  const repository = getRepository();
 
-    return await this.repository.save(user);
+
+  const user = repository.create({
+    first_name : userData.first_name,
+    last_name : userData.first_name,
+    user_email : userData.user_email,
+    user_pass : userData.user_pass,
+    role : userData.role || UserRole.CUSTOMER,
+    is_verified : false,
+  });
+  return await repository.save(user);
+};
+
+// find user my mail 
+export const findByEmail = async (email : string) : Promise<User | null > => {
+  const repository = getRepository();
+  return await repository.findOne({
+    where : {user_email : email},
+  })
+};
+
+// find by user ID 
+export const findById = async ( id : number) : Promise<User | null> => {
+  const repository = getRepository();
+  return await repository.findOne({
+    where : {id},
+  });
+};
+
+
+// verify user 
+
+
+export const verifyUser = async (userId : number) : Promise<User> => {
+  const repository = getRepository();
+
+  await repository.update(userId, {is_verified:true});
+  const user = await findById(userId);
+
+  if (!user) {
+  throw new Error ("user not found")
   }
 
+  return user;
+};
 
-  async findByEmail(email: string): Promise<User | null> {
-    return await this.repository.findOne({
-      where: { user_email: email },
-    });
+
+
+// check if email existed 
+export const emailExists = async (email : string) : Promise<boolean> => {
+  const repository = getRepository();
+
+  const count = await repository.count({
+    where : { user_email : email},
+  })
+
+  return count >0;
+};
+
+
+
+// find user with OTPS 
+
+export const findEmailWithOtps = async (email : string) : Promise<User | null > => {
+  const repository = getRepository();
+
+  return await repository.findOne ({
+    where : {user_email : email},
+    relations : ["otps"],
+  });
+
+};
+
+
+// update user 
+
+ export const update = async (userId : number , date : Partial<User>) : 
+ Promise<User> => {
+  const repository = getRepository();
+
+  await repository.update(userId, date);
+  const user = await findById(userId);
+
+  if (!user) {
+     throw new Error ("user is not found");
   }
+  return user;
 
-  async findById(id: number): Promise<User | null> {
-    return await this.repository.findOne({
-      where: { id },
-    });
-  }
+ }
 
-  async verifyUser(userId: number): Promise<User> {
-    await this.repository.update(userId, { is_verified: true });
-    const user = await this.findById(userId);
-    if (!user) {
-      throw new Error("User not found after verification");
-    }
-    return user;
-  }
+// delete user by mail 
 
-  async emailExists(email: string): Promise<boolean> {
-    const count = await this.repository.count({
-      where: { user_email: email },
-    });
-    return count > 0;
-  }
+export const deleteByEmail = async (email: string): Promise<void> => {
+  const repository = getRepository();
 
-  
-  async findByEmailWithOtps(email: string): Promise<User | null> {
-    return await this.repository.findOne({
-      where: { user_email: email },
-      relations: ["otps"],
-    });
-  }
-
-  async update(userId: number, data: Partial<User>): Promise<User> {
-    await this.repository.update(userId, data);
-    const user = await this.findById(userId);
-    if (!user) {
-      throw new Error("User not found");
-    }
-    return user;
-  }
-}
+  await repository.delete({ user_email: email });
+};
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+ 

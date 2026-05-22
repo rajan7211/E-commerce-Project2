@@ -5,12 +5,20 @@ import { errorHandler } from "./middlewares/error-handler.middleware";
 
 dotenv.config();
 
-import express = require("express");
+import express = require ("express");
+import swaggerUi from "swagger-ui-express";
+import { spec } from "node:test/reporters";
+import { specs } from "./config/swagger";
+
+
 
 const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+
+app.use("/api-docs" , swaggerUi.serve, swaggerUi.setup(specs));
 
 
 app.get('/', (req, res) => {
@@ -23,6 +31,7 @@ app.get('/', (req, res) => {
 
 // Auth routes
 app.use('/auth', authRoutes);
+
 app.use((req, res) => {
   res.status(404).json({
     success: false,

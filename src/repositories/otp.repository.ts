@@ -3,59 +3,123 @@ import { AppDataSource } from "../config/data-source";
 import { Otpverification } from "../entities/otpVerification";
 import { User } from "../entities/User";
 
-export class OtpRepository {
-  private repository: Repository<Otpverification> = AppDataSource.getRepository(Otpverification);
 
-  async create(user: User, otpCode: string, expiresAt: Date): Promise<Otpverification> {
-    const otp = this.repository.create({
-      user,
-      otp_code: otpCode,
-      expires_at: expiresAt,
-      is_used: false,
-    });
+const getRepository = (): Repository<Otpverification> => {
+  return AppDataSource.getRepository(Otpverification);
+};
 
-    return await this.repository.save(otp);
+
+
+// Create OTP 
+export const create = async (
+  user: User,
+  otpCode: string,
+  expiresAt: Date
+): Promise<Otpverification> => {
+  const repository = getRepository();
+
+  const otp = repository.create({
+    user,
+    otp_code: otpCode,
+    expires_at: expiresAt,
+    is_used: false,
+  });
+
+  return await repository.save(otp);
+};
+
+
+
+// find valid otp 
+export const findValidOtp = async (
+  userId: number,
+  otpCode: string
+): Promise<Otpverification | null> => {
+  const repository = getRepository();
+
+  return await repository
+    .createQueryBuilder("otp")
+    .innerJoinAndSelect("otp.user", "user")
+    .where("user.id = :userId", { userId: userId })
+    .andWhere("otp.otp_code = :otpCode", { otpCode: otpCode })
+    .andWhere("otp.is_used = :isUsed", { isUsed: false })
+    .andWhere("otp.expires_at > :now", { now: new Date() })
+    .orderBy("otp.created_at", "DESC")
+    .getOne();
+};
+
+
+
+
+// mark otp as used 
+export const markAsUsed = async (otpId: number): Promise<void> => {
+  const repository = getRepository();
+
+  await repository.update(otpId, { is_used: true });
+};
+
+
+
+
+
+// Invalidate previous otps (fixed)
+
+export const invalidatePreviousOtps = async (userId: number): Promise<void> => {
+  const repository = getRepository();
+
+
+  // Get all unused OTPs for this user
+  const unusedOtps = await repository.find({
+    where: { 
+      user: { id: userId },
+      is_used: false 
+    },
+  });
+
+
+
+  // mark each as used 
+
+  for (const otp of unusedOtps) {
+    await repository.update(otp.id, { is_used: true });
   }
+};
 
-  async findValidOtp(userId: number, otpCode: string): Promise<Otpverification | null> {
-    return await this.repository
-      .createQueryBuilder("otp")
-      .innerJoinAndSelect("otp.user", "user")
-      .where("user.id = :userId", { userId })
-      .andWhere("otp.otp_code = :otpCode", { otpCode })
-      .andWhere("otp.is_used = :isUsed", { isUsed: false })
-      .andWhere("otp.expires_at > :now", { now: new Date() })
-      .orderBy("otp.created_at", "DESC")
-      .getOne();
-  }
 
-  async markAsUsed(otpId: number): Promise<void> {
-    await this.repository.update(otpId, { is_used: true });
-  }
+// delete expired otp 
 
-  async invalidatePreviousOtps(userId: number): Promise<void> {
-    await this.repository
-      .createQueryBuilder()
-      .update(Otpverification)
-      .set({ is_used: true })
-      .where("user_id = :userId", { userId })
-      .andWhere("is_used = :isUsed", { isUsed: false })
-      .execute();
-  }
+export const deleteExpiredOtps = async (): Promise<void> => {
+  const repository = getRepository();
 
-  async deleteExpiredOtps(): Promise<void> {
-    await this.repository.delete({
-      expires_at: LessThan(new Date()),
-    });
-  }
+  await repository.delete({
+    expires_at: LessThan(new Date()),
+  });
+};
 
-  async getLatestOtpForUser(userId: number): Promise<Otpverification | null> {
-    return await this.repository.findOne({
-      where: { user: { id: userId }, is_used: false },
-      order: { created_at: "DESC" },
-    });
-  }
-}
+// get latest otp for user 
+
+export const getLatestOtpForUser = async (userId: number): Promise<Otpverification | null> => {
+  const repository = getRepository();
+
+  return await repository.findOne({
+    where: { user: { id: userId }, is_used: false },
+    order: { created_at: "DESC" },
+  });
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
