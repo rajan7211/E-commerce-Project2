@@ -117,4 +117,97 @@ export const deleteByEmail = async (email: string): Promise<void> => {
 
 
 
+
+// save forgot password otp
+export const saveForgotPasswordOtp = async (
+  userId: number,
+  otpCode: string,
+  expiresAt: Date
+): Promise<User> => {
+  const repository = getRepository();
+
+  await repository.update(userId, {
+    forgot_password_otp: otpCode,
+    forgot_password_otp_expires_at: expiresAt,
+    forgot_password_otp_verified: false,
+  });
+
+  const user = await findById(userId);
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  return user;
+};
+
+// verify forgot password otp
+export const verifyForgotPasswordOtp = async (
+  userId: number,
+  otpCode: string
+): Promise<boolean> => {
+  const repository = getRepository();
+
+  const user = await findById(userId);
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  // Check if OTP matches
+  if (user.forgot_password_otp !== otpCode) {
+    return false;
+  }
+
+  // Check if OTP is expired
+  if (
+    !user.forgot_password_otp_expires_at ||
+    new Date() > user.forgot_password_otp_expires_at
+  ) {
+    return false;
+  }
+
+  // Mark OTP as verified
+  await repository.update(userId, {
+    forgot_password_otp_verified: true,
+  });
+
+  return true;
+};
+
+// reset password
+export const resetPassword = async (
+  userId: number,
+  newPassword: string
+): Promise<User> => {
+  const repository = getRepository();
+
+  // Update password and clear OTP fields
+  await repository.update(userId, {
+    user_pass: newPassword, // Will be hashed by BeforeUpdate hook
+    forgot_password_otp: null,
+    forgot_password_otp_expires_at: null,
+    forgot_password_otp_verified: false,
+  });
+
+  const user = await findById(userId);
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  return user;
+};
+
+// clear forgot password otp
+export const clearForgotPasswordOtp = async (userId: number): Promise<void> => {
+  const repository = getRepository();
+
+  await repository.update(userId, {
+    forgot_password_otp: null,
+    forgot_password_otp_expires_at: null,
+    forgot_password_otp_verified: false,
+  });
+};
+
+
+
+
  

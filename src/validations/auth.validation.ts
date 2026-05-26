@@ -139,7 +139,92 @@ export const authValidation = {
         "any.required": validationMessages.EMAIL.REQUIRED,
       }),
   }),
+
+
+  // Forgot password validations 
+
+  forgotPassword: Joi.object({
+    email: Joi.string()
+      .required()
+      .email()
+      .pattern(emailPattern)
+      .lowercase()
+      .trim()
+      .messages({
+        "string.empty": validationMessages.EMAIL.EMPTY,
+        "string.email": validationMessages.EMAIL.INVALID,
+        "string.pattern.base": validationMessages.EMAIL.INVALID,
+        "any.required": validationMessages.EMAIL.REQUIRED,
+      }),
+  }),
+
+  verifyForgotPasswordOtp: Joi.object({
+    email: Joi.string()
+      .required()
+      .email()
+      .pattern(emailPattern)
+      .lowercase()
+      .trim()
+      .messages({
+        "string.empty": validationMessages.EMAIL.EMPTY,
+        "string.email": validationMessages.EMAIL.INVALID,
+        "string.pattern.base": validationMessages.EMAIL.INVALID,
+        "any.required": validationMessages.EMAIL.REQUIRED,
+      }),
+
+    otp: Joi.string()
+      .required()
+      .length(6)
+      .pattern(otpPattern)
+      .messages({
+        "string.empty": validationMessages.OTP.EMPTY,
+        "string.length": validationMessages.OTP.LENGTH,
+        "string.pattern.base": validationMessages.OTP.INVALID,
+        "any.required": validationMessages.OTP.REQUIRED,
+      }),
+  }),
+
+  resetPassword: Joi.object({
+    email: Joi.string()
+      .required()
+      .email()
+      .pattern(emailPattern)
+      .lowercase()
+      .trim()
+      .messages({
+        "string.empty": validationMessages.EMAIL.EMPTY,
+        "string.email": validationMessages.EMAIL.INVALID,
+        "string.pattern.base": validationMessages.EMAIL.INVALID,
+        "any.required": validationMessages.EMAIL.REQUIRED,
+      }),
+
+    new_password: Joi.string()
+      .required()
+      .min(8)
+      .max(100)
+      .pattern(passwordPattern)
+      .messages({
+        "string.empty": validationMessages.PASSWORD.EMPTY,
+        "string.min": validationMessages.PASSWORD.MIN,
+        "string.max": validationMessages.PASSWORD.MAX,
+        "string.pattern.base": validationMessages.PASSWORD.PATTERN,
+        "any.required": validationMessages.PASSWORD.REQUIRED,
+      }),
+
+    confirm_password: Joi.string()
+      .required()
+      .valid(Joi.ref("new_password"))
+      .messages({
+        "string.empty": validationMessages.CONFIRMPASSWORD.EMPTY,
+        "any.only": validationMessages.CONFIRMPASSWORD.MISMATCH,
+        "any.required": validationMessages.CONFIRMPASSWORD.REQUIRED,
+      }),
+  }),
 };
+
+
+
+
 
 
 

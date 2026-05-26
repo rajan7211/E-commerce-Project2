@@ -21,7 +21,6 @@ import { Otpverification } from "./otpVerification";
 
 @Entity("users")
 export class User {
-
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -37,10 +36,8 @@ export class User {
   @Column()
   user_pass: string;
 
-
-@Column({ default : false})
-is_verified : boolean;
-
+  @Column({ default: false })
+  is_verified: boolean;
 
   @Column({
     type: "enum",
@@ -49,10 +46,23 @@ is_verified : boolean;
   })
   role: UserRole;
 
-  @OneToMany(()=> Otpverification , (otp)=> otp.user, { onDelete:
-    "CASCADE"})
-  otps : Otpverification[];
+  // ========== FORGOT PASSWORD FIELDS ==========
+  // FIX: Add explicit type "varchar" for OTP column
+  @Column({ type: "varchar", length: 6, nullable: true })
+  forgot_password_otp: string | null;
 
+  // FIX: Add explicit type "timestamp" for expiry
+  @Column({ type: "timestamp", nullable: true })
+  forgot_password_otp_expires_at: Date | null;
+
+  // FIX: Add explicit type "boolean"
+  @Column({ type: "boolean", default: false })
+  forgot_password_otp_verified: boolean;
+
+  @OneToMany(() => Otpverification, (otp) => otp.user, {
+    onDelete: "CASCADE",
+  })
+  otps: Otpverification[];
 
   @OneToMany(() => Address, (address) => address.user)
   addresses: Address[];
@@ -75,27 +85,15 @@ is_verified : boolean;
   @BeforeInsert()
   @BeforeUpdate()
   async hashPassword() {
-    if (this.user_pass && !this.user_pass.startsWith("$2b$")) {
+    if (this.user_pass && !this.user_pass.startsWith("$2b$2b")) {
       this.user_pass = await bcrypt.hash(this.user_pass, 10);
     }
   }
 
-
   async validatePassword(password: string): Promise<boolean> {
     return bcrypt.compare(password, this.user_pass);
   }
-
 }
-
-
-
-
-
-
-
-
-
-
 
 
 
