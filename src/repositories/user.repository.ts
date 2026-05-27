@@ -211,5 +211,36 @@ export const clearForgotPasswordOtp = async (userId: number): Promise<void> => {
 
 
 
+// change password
+export const changePassword = async (
+  userId: number,
+  newPassword: string
+): Promise<User> => {
+  const repository = getRepository();
+
+  const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+  await repository.update(userId, {
+    user_pass: hashedPassword,
+  });
+
+  const user = await findById(userId);
+  if (!user) {
+    throw new Error("User not found");
+  }
+  delete(user as any).user_pass;
+  return user;
+};
+
+
+
+
+
+
 
  
+
+
+
+
+

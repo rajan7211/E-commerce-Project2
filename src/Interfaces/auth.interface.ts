@@ -1,3 +1,4 @@
+import { string } from "joi";
 import { UserRole } from "../utils/enums";
 
 export interface RegisterRequestBody {
@@ -22,6 +23,15 @@ export interface VerifyOtpRequestBody {
 export interface ResendOtpRequestBody {
   email: string;
 }
+
+
+export interface ChangePasswordRequestBody {
+  current_password : string;
+  new_password : string;
+  confirm_password : string;
+}
+
+
 
 export interface UserPayload {
   id: number;
@@ -59,6 +69,12 @@ export interface LoginResponse {
     accessToken: string;
   };
 }
+
+
+export interface LogoutResponse{
+  message : string;
+}
+
 
 
 

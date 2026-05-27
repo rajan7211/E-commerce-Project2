@@ -18,6 +18,7 @@ const getOtpTemplate = (otp: string, firstName: string): string => {
   `;
 };
 
+
 // GET WELCOME TEMPLATE
 const getWelcomeTemplate = (firstName: string): string => {
   return `
@@ -30,6 +31,7 @@ const getWelcomeTemplate = (firstName: string): string => {
     </div>
   `;
 };
+
 
 // GET FORGOT PASSWORD OTP TEMPLATE
 const getForgotPasswordOtpTemplate = (
@@ -56,6 +58,7 @@ const getForgotPasswordOtpTemplate = (
   `;
 };
 
+
 // GET PASSWORD RESET SUCCESS TEMPLATE
 const getPasswordResetSuccessTemplate = (firstName: string): string => {
   return `
@@ -72,6 +75,7 @@ const getPasswordResetSuccessTemplate = (firstName: string): string => {
   `;
 };
 
+
 // SEND OTP EMAIL
 export const sendOtpEmail = async (
   email: string,
@@ -79,7 +83,7 @@ export const sendOtpEmail = async (
   otp: string
 ): Promise<void> => {
   const mailOptions = {
-    from: `"E-commerce" <${process.env.SMTP_USER}>`,
+    from: `"My_E-commerce" <${process.env.SMTP_USER}>`,
     to: email,
     subject: "Email Verification OTP",
     html: getOtpTemplate(otp, firstName),
@@ -88,13 +92,14 @@ export const sendOtpEmail = async (
   await transporter.sendMail(mailOptions);
 };
 
+
 // SEND WELCOME EMAIL
 export const sendWelcomeEmail = async (
   email: string,
   firstName: string
 ): Promise<void> => {
   const mailOptions = {
-    from: `"E-commerce" <${process.env.SMTP_USER}>`,
+    from: `"MY_E-commerce" <${process.env.SMTP_USER}>`,
     to: email,
     subject: "Welcome to Our Platform!",
     html: getWelcomeTemplate(firstName),
@@ -114,7 +119,7 @@ export const sendForgotPasswordOtpEmail = async (
   otp: string
 ): Promise<void> => {
   const mailOptions = {
-    from: `"E-commerce" <${process.env.SMTP_USER}>`,
+    from: `"My_E-commerce" <${process.env.SMTP_USER}>`,
     to: email,
     subject: "Password Reset OTP",
     html: getForgotPasswordOtpTemplate(otp, firstName),
@@ -134,7 +139,7 @@ export const sendPasswordResetSuccessEmail = async (
   firstName: string
 ): Promise<void> => {
   const mailOptions = {
-    from: `"E-commerce" <${process.env.SMTP_USER}>`,
+    from: `"My_E-commerce" <${process.env.SMTP_USER}>`,
     to: email,
     subject: "Your Password Has Been Reset",
     html: getPasswordResetSuccessTemplate(firstName),
@@ -146,6 +151,13 @@ export const sendPasswordResetSuccessEmail = async (
     console.error("Error sending password reset success email:", error);
   }
 };
+
+
+
+
+
+
+
 
 
 

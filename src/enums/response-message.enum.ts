@@ -2,7 +2,6 @@ export enum ResponseMessage {
   REGISTRATION_SUCCESS = "Registration successful. Please check your email for OTP verification.",
   EMAIL_ALREADY_EXISTS = "Email already registered.",
   EMAIL_NOT_FOUND = "Email not found.",
-  
 
   OTP_SENT = "OTP sent successfully to your email.",
   OTP_VERIFIED = "Email verified successfully. You can now login.",
@@ -11,13 +10,12 @@ export enum ResponseMessage {
   OTP_ALREADY_USED = "OTP has already been used.",
   OTP_REQUIRED = "OTP is required.",
 
-
   LOGIN_SUCCESS = "Login successful.",
   EMAIL_NOT_VERIFIED = "Please verify your email first.",
   INVALID_CREDENTIALS = "Invalid email or password.",
   USER_NOT_FOUND = "User not found.",
-  
-   FORGOT_PASSWORD_OTP_SENT = "Password reset OTP has been sent to your email.",
+
+  FORGOT_PASSWORD_OTP_SENT = "Password reset OTP has been sent to your email.",
   FORGOT_PASSWORD_OTP_INVALID = "Invalid OTP code.",
   FORGOT_PASSWORD_OTP_EXPIRED = "OTP has expired. Please request a new one.",
   FORGOT_PASSWORD_OTP_VERIFIED = "OTP verified successfully.",
@@ -25,30 +23,16 @@ export enum ResponseMessage {
   OTP_NOT_VERIFIED = "Please verify OTP first.",
   CANNOT_RESET_PASSWORD_WITHOUT_OTP = "Password reset requires OTP verification.",
 
+  PASSWORD_CHANGED_SUCCESS = "Password changed successfully.",
+  LOGOUT_SUCCESS = "Logged out successfully.",
+  CURRENT_PASSWORD_INVALID = "Current password is incorrect.",
+  UNAUTHORIZED = "Unauthorized access.",
+  INVALID_TOKEN = "Invalid or expired token.",
+
   VALIDATION_ERROR = "Validation error.",
   PASSWORDS_DO_NOT_MATCH = "Passwords do not match.",
   PASSWORD_REQUIRED = "Password is required.",
-  
 
   INTERNAL_ERROR = "Internal server error.",
   SUCCESS = "Success.",
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

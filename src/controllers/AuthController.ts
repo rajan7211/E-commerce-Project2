@@ -7,9 +7,14 @@ import {
   VerifyOtpRequestBody,
   ResendOtpRequestBody,
 } from "../Interfaces/auth.interface";
+import { changePassword as changePasswordService, logout as logoutService } from "../services/AuthService";
+import { ChangePasswordRequestBody } from "../Interfaces/auth.interface";
 
+import { ResponseMessage } from "../enums/response-message.enum";
+import { HttpStatus } from "../enums/http-status.enum";
+import { createError } from "../middlewares/error-handler.middleware";
 
-// REGISTER USER
+// register user
 
 export const register = async (req: Request, res: Response) => {
   try {
@@ -33,7 +38,7 @@ export const register = async (req: Request, res: Response) => {
 };
 
 
-// VERIFY OTP
+// verify otp 
 
 export const verifyOtp = async (req: Request, res: Response) => {
   try {
@@ -56,7 +61,7 @@ export const verifyOtp = async (req: Request, res: Response) => {
 };
 
 
-// RESEND OTP
+// resend otp
 
 export const resendOtp = async (req: Request, res: Response) => {
   try {
@@ -78,7 +83,7 @@ export const resendOtp = async (req: Request, res: Response) => {
   }
 };
 
-// LOGIN USER
+// login user
 
 export const login = async (req: Request, res: Response) => {
   try {
@@ -100,6 +105,53 @@ export const login = async (req: Request, res: Response) => {
     });
   }
 };
+
+
+// change password 
+
+export const changePassword = async (req: Request, res: Response) => {
+  try {
+    const userId = req.user?.userId;
+    if (!userId) {
+      throw createError(ResponseMessage.UNAUTHORIZED, HttpStatus.UNAUTHORIZED);
+    }
+
+    const data: ChangePasswordRequestBody = req.body;
+    const result = await changePasswordService(userId, data);
+
+    res.status(result.statusCode).json({
+      success: result.success,
+      message: result.message,
+      data: result.data,
+    });
+  } catch (error: any) {
+    const statusCode = error.statusCode || 400;
+    res.status(statusCode).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// logout
+
+export const logout = async (req: Request, res: Response) => {
+  try {
+    const result = await logoutService();
+    res.status(result.statusCode).json({
+      success: result.success,
+      message: result.message,
+      data: result.data,
+    });
+  } catch (error: any) {
+    const statusCode = error.statusCode || 400;
+    res.status(statusCode).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 
 
 

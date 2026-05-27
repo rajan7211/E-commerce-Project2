@@ -15,7 +15,14 @@ import { ResponseMessage } from "../enums/response-message.enum";
 import { HttpStatus } from "../enums/http-status.enum";
 import { ServiceResponse } from "../Interfaces/service-response.interface";
 import { createError } from "../middlewares/error-handler.middleware";
-import { ForgotPasswordInterface } from "../Interfaces/forgot-password.interface";
+import {
+  ForgotPasswordRequestBody,
+  VerifyForgotPasswordOtpRequestBody,
+  ResetPasswordRequestBody,
+  ForgotPasswordResponse,
+  VerifyForgotPasswordOtpResponse,
+  ResetPasswordResponse,
+} from "../Interfaces/forgot-password.interface";
 
 
 export const forgotPassword = async (
@@ -32,12 +39,8 @@ export const forgotPassword = async (
   try {
     // Generate OTP
     const otpCode = getnerateOtp();
-
-    // Set 15 minutes expiry for forgot password
     const expiryTime = new Date();
-    expiryTime.setMinutes(expiryTime.getMinutes() + 15);
-
-    // Save OTP to database
+    expiryTime.setMinutes(expiryTime.getMinutes() + 10);
     await saveForgotPasswordOtpRepo(user.id, otpCode, expiryTime);
 
     // Send OTP email
@@ -61,11 +64,9 @@ export const forgotPassword = async (
   }
 };
 
-/**
- * Verify Forgot Password OTP Service
- * Step 2 of the forgot password flow
- * Validates OTP and marks it as verified
- */
+
+// verify otp pass 
+
 export const verifyForgotPasswordOtp = async (
   data: VerifyForgotPasswordOtpRequestBody
 ): Promise<ServiceResponse<VerifyForgotPasswordOtpResponse>> => {
@@ -78,7 +79,7 @@ export const verifyForgotPasswordOtp = async (
     throw createError(ResponseMessage.EMAIL_NOT_FOUND, HttpStatus.NOT_FOUND);
   }
 
-  // Check if OTP exists
+  // if OTP exists
   if (!user.forgot_password_otp) {
     throw createError(
       ResponseMessage.FORGOT_PASSWORD_OTP_INVALID,
@@ -86,7 +87,7 @@ export const verifyForgotPasswordOtp = async (
     );
   }
 
-  // Check if OTP expired
+  //  if OTP expired
   if (isOtpExpired(user.forgot_password_otp_expires_at!)) {
     // Clear expired OTP
     await clearForgotPasswordOtpRepo(user.id);
@@ -117,11 +118,11 @@ export const verifyForgotPasswordOtp = async (
   };
 };
 
-/**
- * Reset Password Service
- * Step 3 of the forgot password flow
- * Updates password after OTP verification
- */
+
+
+
+// reset password
+
 export const resetPassword = async (
   data: ResetPasswordRequestBody
 ): Promise<ServiceResponse<ResetPasswordResponse>> => {
@@ -167,5 +168,14 @@ export const resetPassword = async (
     );
   }
 };
+
+
+
+
+
+
+
+
+
 
 

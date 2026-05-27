@@ -20,6 +20,7 @@ import { User } from "../entities/User";
 
 
 // generate otp and send otp 
+
 export const generateAndSendOtp = async (user : User) : Promise<void> => {
   const otpCode = getnerateOtp();
    const otpExpiry = getOtpExpiry();

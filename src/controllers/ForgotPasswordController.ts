@@ -6,13 +6,10 @@ import {
   resetPassword as resetPasswordService,
 } from "../services/ForgotPasswordService";
 
-/**
- * Forgot Password Controller
- * Step 1: Send OTP to email
- * 
- * Handles: POST /auth/forgot-password
- * Body: { email: string }
- */
+
+
+
+
 export const forgotPassword = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const result = await forgotPasswordService(req.body);
@@ -25,13 +22,7 @@ export const forgotPassword = asyncHandler(
   }
 );
 
-/**
- * Verify Forgot Password OTP Controller
- * Step 2: Verify OTP sent to user email
- * 
- * Handles: POST /auth/verify-forgot-password-otp
- * Body: { email: string, otp: string }
- */
+
 export const verifyForgotPasswordOtp = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const result = await verifyForgotPasswordOtpService(req.body);
@@ -44,13 +35,6 @@ export const verifyForgotPasswordOtp = asyncHandler(
   }
 );
 
-/**
- * Reset Password Controller
- * Step 3: Reset password after OTP verification
- * 
- * Handles: POST /auth/reset-password
- * Body: { email: string, new_password: string, confirm_password: string }
- */
 export const resetPassword = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const result = await resetPasswordService(req.body);
@@ -62,5 +46,18 @@ export const resetPassword = asyncHandler(
     });
   }
 );
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

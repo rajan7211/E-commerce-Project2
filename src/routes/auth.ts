@@ -1,15 +1,17 @@
 import { Router } from "express";
 import { validateRequest } from "../middlewares/validation.middleware";
 import { authValidation } from "../validations/auth.validation";
+import { authenticate } from "../middlewares/authenticate.middleware";
 
 import {
   register,
   login,
   verifyOtp,
   resendOtp,
+  changePassword,
+  logout
 } from "../controllers/AuthController";
 
-// Import Forgot Password Controllers 
 import {
   forgotPassword,
   verifyForgotPasswordOtp,
@@ -17,8 +19,7 @@ import {
 } from "../controllers/ForgotPasswordController";
 
 const router = Router();
-
-//  REGISTER & LOGIN 
+ 
 
 /**
  * @swagger
@@ -403,6 +404,110 @@ router.post(
   validateRequest(authValidation.resetPassword),
   resetPassword
 );
+
+
+/**
+ * @swagger
+ * /auth/change-password:
+ *   post:
+ *     summary: Change user password
+ *     tags: [Authentication]
+ *     description: Change password for authenticated user
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - current_password
+ *               - new_password
+ *               - confirm_password
+ *             properties:
+ *               current_password:
+ *                 type: string
+ *                 format: password
+ *                 example: "OldPass@123"
+ *               new_password:
+ *                 type: string
+ *                 format: password
+ *                 example: "NewPass@123"
+ *               confirm_password:
+ *                 type: string
+ *                 format: password
+ *                 example: "NewPass@123"
+ *     responses:
+ *       200:
+ *         description: Password changed successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: "Password changed successfully."
+ *                 data:
+ *                   type: object
+ *       400:
+ *         description: Invalid current password or validation error
+ *       401:
+ *         description: Unauthorized - Invalid or missing token
+ *       404:
+ *         description: User not found
+ */
+router.post(
+  "/change-password",
+  authenticate,
+  validateRequest(authValidation.changePassword),
+  changePassword
+);
+
+//  LOGOUT (PROTECTED ROUTE)
+
+/**
+ * @swagger
+ * /auth/logout:
+ *   post:
+ *     summary: Logout user
+ *     tags: [Authentication]
+ *     description: Logout authenticated user (client should remove token)
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Logged out successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: "Logged out successfully."
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     message:
+ *                       type: string
+ *                       example: "Logged out successfully."
+ *       401:
+ *         description: Unauthorized - Invalid or missing token
+ */
+router.post(
+  "/logout",
+  authenticate,
+  logout
+);
+
 
 export default router;
 

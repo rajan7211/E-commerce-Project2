@@ -220,7 +220,44 @@ export const authValidation = {
         "any.required": validationMessages.CONFIRMPASSWORD.REQUIRED,
       }),
   }),
+
+//  change password 
+
+changePassword: Joi.object({
+    current_password: Joi.string()
+      .required()
+      .messages({
+        "string.empty": validationMessages.PASSWORD.EMPTY,
+        "any.required": validationMessages.PASSWORD.REQUIRED,
+      }),
+
+    new_password: Joi.string()
+      .required()
+      .min(8)
+      .max(100)
+      .pattern(passwordPattern)
+      .messages({
+        "string.empty": validationMessages.PASSWORD.EMPTY,
+        "string.min": validationMessages.PASSWORD.MIN,
+        "string.max": validationMessages.PASSWORD.MAX,
+        "string.pattern.base": validationMessages.PASSWORD.PATTERN,
+        "any.required": validationMessages.PASSWORD.REQUIRED,
+      }),
+
+    confirm_password: Joi.string()
+      .required()
+      .valid(Joi.ref("new_password"))
+      .messages({
+        "string.empty": validationMessages.CONFIRMPASSWORD.EMPTY,
+        "any.only": validationMessages.CONFIRMPASSWORD.MISMATCH,
+        "any.required": validationMessages.CONFIRMPASSWORD.REQUIRED,
+      }),
+  }),
+
 };
+
+
+
 
 
 

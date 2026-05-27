@@ -19,6 +19,10 @@ import { ServiceResponse } from "../Interfaces/service-response.interface";
 import { createError } from "../middlewares/error-handler.middleware";
 
 
+import { changePassword as changePasswordRepo, findById as findUserById } from "../repositories/user.repository";
+import { ChangePasswordRequestBody, LogoutResponse } from "../Interfaces/auth.interface";
+
+
 // register
 export const register = async (
   data: RegisterRequestBody
@@ -29,6 +33,7 @@ export const register = async (
   if (emailExists) {
     throw createError(ResponseMessage.EMAIL_ALREADY_EXISTS, HttpStatus.CONFLICT);
   }
+  
 
   const user = await createUser({
     first_name: data.first_name,
@@ -105,9 +110,54 @@ return {
   },
   statusCode : HttpStatus.OK
 }
-
-
 }
+
+
+
+// change Password  
+export const changePassword = async (
+  userId: number,
+  data: ChangePasswordRequestBody
+): Promise<ServiceResponse<any>> => {
+  const user = await findUserById(userId);
+
+  if (!user) {
+    throw createError(ResponseMessage.USER_NOT_FOUND, HttpStatus.NOT_FOUND);
+  }
+
+  const isPasswordValid = await user.validatePassword(data.current_password);
+  if (!isPasswordValid) {
+    throw createError(ResponseMessage.CURRENT_PASSWORD_INVALID, HttpStatus.BAD_REQUEST);
+  }
+  
+  // Update Password
+  await changePasswordRepo(userId, data.new_password);
+
+  return {
+    success: true,
+    message: ResponseMessage.PASSWORD_CHANGED_SUCCESS,
+    data: {},
+    statusCode: HttpStatus.OK,
+  };
+};
+
+
+
+// logpout 
+export const logout = async (): Promise<ServiceResponse<LogoutResponse>> => {
+  return {
+    success: true,
+    message: ResponseMessage.LOGOUT_SUCCESS,
+    data: {
+      message: ResponseMessage.LOGOUT_SUCCESS,
+    },
+    statusCode: HttpStatus.OK,
+  };
+};
+
+
+
+
 
 
 

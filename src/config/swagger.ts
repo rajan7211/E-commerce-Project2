@@ -30,7 +30,13 @@ const options = {
         },
         RegisterRequest: {
           type: "object",
-          required: ["first_name", "last_name", "email", "password", "confirm_password"],
+          required: [
+            "first_name",
+            "last_name",
+            "email",
+            "password",
+            "confirm_password",
+          ],
           properties: {
             first_name: { type: "string", example: "John" },
             last_name: { type: "string", example: "Doe" },
@@ -63,6 +69,32 @@ const options = {
             email: { type: "string", example: "john@gmail.com" },
           },
         },
+        ChangePasswordRequest: {
+          type: "object",
+          required: ["current_password", "new_password", "confirm_password"],
+          properties: {
+            current_password: { type: "string", example: "OldPass@123" },
+            new_password: { type: "string", example: "NewPass@123" },
+            confirm_password: { type: "string", example: "NewPass@123" },
+          },
+        },
+        LogoutResponse: {
+          type: "object",
+          properties: {
+            success: { type: "boolean", example: true },
+            message: { type: "string", example: "Logged out successfully." },
+            data: {
+              type: "object",
+              properties: {
+                message: {
+                  type: "string",
+                  example: "Logged out successfully.",
+                },
+              },
+            },
+          },
+        },
+
         ErrorResponse: {
           type: "object",
           properties: {
@@ -92,7 +124,3 @@ const options = {
 };
 
 export const specs = swaggerJsdoc(options);
-
-
-
-
