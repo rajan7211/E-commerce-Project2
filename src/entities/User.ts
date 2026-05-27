@@ -13,6 +13,7 @@ import {
   BeforeUpdate,
 } from "typeorm";
 
+
 import { Address } from "./Address";
 import { Cart } from "./Cart";
 import { Order } from "./Order";
@@ -46,16 +47,16 @@ export class User {
   })
   role: UserRole;
 
-  // ========== FORGOT PASSWORD FIELDS ==========
-  // FIX: Add explicit type "varchar" for OTP column
+
+
   @Column({ type: "varchar", length: 6, nullable: true })
   forgot_password_otp: string | null;
 
-  // FIX: Add explicit type "timestamp" for expiry
+
   @Column({ type: "timestamp", nullable: true })
   forgot_password_otp_expires_at: Date | null;
 
-  // FIX: Add explicit type "boolean"
+
   @Column({ type: "boolean", default: false })
   forgot_password_otp_verified: boolean;
 
@@ -94,6 +95,30 @@ export class User {
     return bcrypt.compare(password, this.user_pass);
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

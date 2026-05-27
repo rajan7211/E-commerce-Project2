@@ -15,47 +15,9 @@ import { ResponseMessage } from "../enums/response-message.enum";
 import { HttpStatus } from "../enums/http-status.enum";
 import { ServiceResponse } from "../Interfaces/service-response.interface";
 import { createError } from "../middlewares/error-handler.middleware";
+import { ForgotPasswordInterface } from "../Interfaces/forgot-password.interface";
 
-// ========== INTERFACES ==========
 
-export interface ForgotPasswordRequestBody {
-  email: string;
-}
-
-export interface VerifyForgotPasswordOtpRequestBody {
-  email: string;
-  otp: string;
-}
-
-export interface ResetPasswordRequestBody {
-  email: string;
-  new_password: string;
-  confirm_password: string;
-}
-
-export interface ForgotPasswordResponse {
-  message: string;
-  email: string;
-}
-
-export interface VerifyForgotPasswordOtpResponse {
-  message: string;
-  email: string;
-  verified: boolean;
-}
-
-export interface ResetPasswordResponse {
-  message: string;
-  email: string;
-}
-
-// ========== SERVICES ==========
-
-/**
- * Forgot Password Service
- * Step 1 of the forgot password flow
- * Generates OTP and sends to user email
- */
 export const forgotPassword = async (
   data: ForgotPasswordRequestBody
 ): Promise<ServiceResponse<ForgotPasswordResponse>> => {
@@ -180,7 +142,6 @@ export const resetPassword = async (
   }
 
   try {
-    // Update password (will be hashed by BeforeUpdate hook in User entity)
     await resetPasswordRepo(user.id, data.new_password);
 
     // Send success email

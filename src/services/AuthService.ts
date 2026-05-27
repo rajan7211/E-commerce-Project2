@@ -19,7 +19,6 @@ import { ServiceResponse } from "../Interfaces/service-response.interface";
 import { createError } from "../middlewares/error-handler.middleware";
 
 
-
 // register
 export const register = async (
   data: RegisterRequestBody
@@ -109,6 +108,21 @@ return {
 
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

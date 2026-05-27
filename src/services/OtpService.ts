@@ -96,11 +96,7 @@ export const generateAndSendOtp = async (user : User) : Promise<void> => {
 
  };
 
-
-
-
 //  resend otp  
-
 
 export  const resendOtp = async (email : string) : Promise<ServiceResponse> => {
   const normalizedEmail = email.toLowerCase().trim();

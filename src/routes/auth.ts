@@ -2,8 +2,6 @@ import { Router } from "express";
 import { validateRequest } from "../middlewares/validation.middleware";
 import { authValidation } from "../validations/auth.validation";
 
-// Import Auth Controllers 
-
 import {
   register,
   login,
@@ -20,7 +18,7 @@ import {
 
 const router = Router();
 
-// ==================== REGISTRATION & LOGIN ====================
+//  REGISTER & LOGIN 
 
 /**
  * @swagger
@@ -141,7 +139,7 @@ router.post(
   login
 );
 
-// ==================== EMAIL VERIFICATION OTP ====================
+//  EMAIL VERIFICATION WITH OTP 
 
 /**
  * @swagger
@@ -235,7 +233,7 @@ router.post(
   resendOtp
 );
 
-// ==================== FORGOT PASSWORD ====================
+//  FORGOT PASSWORD 
 
 /**
  * @swagger
@@ -407,6 +405,11 @@ router.post(
 );
 
 export default router;
+
+
+
+
+
 
 
 

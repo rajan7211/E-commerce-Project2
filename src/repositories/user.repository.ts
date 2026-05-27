@@ -2,7 +2,7 @@ import { Repository } from "typeorm";
 import { AppDataSource } from "../config/data-source";
 import { User } from "../entities/User";
 import { UserRole } from "../utils/enums";
-
+import bcrypt from "bcrypt";
 
 const getRepository =() : Repository<User> => {
   return AppDataSource.getRepository(User);
@@ -181,8 +181,10 @@ export const resetPassword = async (
   const repository = getRepository();
 
   // Update password and clear OTP fields
+const hashedPassword = await bcrypt.hash(newPassword ,10);
+
   await repository.update(userId, {
-    user_pass: newPassword, // Will be hashed by BeforeUpdate hook
+    user_pass: hashedPassword, 
     forgot_password_otp: null,
     forgot_password_otp_expires_at: null,
     forgot_password_otp_verified: false,
