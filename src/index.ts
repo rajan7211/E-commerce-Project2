@@ -1,13 +1,13 @@
 import { AppDataSource } from "./config/data-source";
 import dotenv from "dotenv";
 import authRoutes from './routes/auth';
+import categoryRoutes from "./routes/category.route"
 import { errorHandler } from "./middlewares/error-handler.middleware";
 
 dotenv.config();
 
 import express = require ("express");
 import swaggerUi from "swagger-ui-express";
-import { spec } from "node:test/reporters";
 import { specs } from "./config/swagger";
 
 
@@ -31,6 +31,8 @@ app.get('/', (req, res) => {
 
 // Auth routes
 app.use('/auth', authRoutes);
+app.use("/categories" , categoryRoutes);
+
 
 app.use((req, res) => {
   res.status(404).json({
