@@ -12,8 +12,6 @@ import {
 
 const router = Router();
 
-// ==================== GET ALL CATEGORIES ====================
-
 /**
  * @swagger
  * /categories:
@@ -57,7 +55,6 @@ const router = Router();
  */
 router.get("/", findAll);
 
-// ==================== CREATE CATEGORY ====================
 
 /**
  * @swagger
@@ -121,11 +118,10 @@ router.get("/", findAll);
 router.post(
   "/",
   authenticate,
-  validateRequest(categoryValidation.createCategory),
+  validateRequest(categoryValidation.createcategory),
   create
 );
 
-// ==================== GET CATEGORY BY ID ====================
 
 /**
  * @swagger
@@ -180,7 +176,6 @@ router.post(
  */
 router.get("/:id", findById);
 
-// ==================== UPDATE CATEGORY ====================
 
 /**
  * @swagger
@@ -255,8 +250,6 @@ router.put(
   validateRequest(categoryValidation.updateCategory),
   update
 );
-
-// ==================== DELETE CATEGORY ====================
 
 /**
  * @swagger

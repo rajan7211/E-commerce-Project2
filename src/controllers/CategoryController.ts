@@ -11,7 +11,7 @@ import {
   UpdateCategoryRequestBody,
 } from "../Interfaces/category.interface";
 
-
+ 
 export const create = async (req: Request , res : Response) => {
     try {
         const data : CreateCategoryRequestBody = req.body;

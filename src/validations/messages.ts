@@ -58,6 +58,7 @@ export const validationMessages = {
     INVALID_CREDENTIALS: "Invalid email or password",
   },
 
+  // category msgs 
   CATEGORY: {
     NAME: {
       EMPTY: "Category name is required.",
@@ -67,6 +68,50 @@ export const validationMessages = {
       REQUIRED: "Category name is required.",
     },
   },
+
+// products msgs 
+
+  PRODUCT: {
+    NAME: {
+      EMPTY: "Product name is required.",
+      MIN: "Product name must be at least 2 characters.",
+      MAX: "Product name must not exceed 100 characters.",
+      PATTERN: "Product name can only contain letters, numbers, spaces, hyphens, and underscores.",
+      REQUIRED: "Product name is required.",
+    },
+    PRICE: {
+      EMPTY: "Product price is required.",
+      INVALID: "Product price must be a valid number.",
+      POSITIVE: "Product price must be greater than 0.",
+      REQUIRED: "Product price is required.",
+    },
+    DESCRIPTION: {
+      MAX: "Product description must not exceed 1000 characters.",
+    },
+    STOCK: {
+      EMPTY: "Stock quantity is required.",
+      INVALID: "Stock must be a valid number.",
+      INTEGER: "Stock must be an integer.",
+      MIN: "Stock cannot be negative.",
+      REQUIRED: "Stock quantity is required.",
+    },
+    CATEGORY_ID: {
+      EMPTY: "Category ID is required.",
+      INVALID: "Category ID must be a valid number.",
+      INTEGER: "Category ID must be an integer.",
+      POSITIVE: "Category ID must be greater than 0.",
+      REQUIRED: "Category ID is required.",
+    },
+    STORE_ID: {
+      EMPTY: "Store ID is required.",
+      INVALID: "Store ID must be a valid number.",
+      INTEGER: "Store ID must be an integer.",
+      POSITIVE: "Store ID must be greater than 0.",
+      REQUIRED: "Store ID is required.",
+    },
+  },
+
+  
 };
 
 

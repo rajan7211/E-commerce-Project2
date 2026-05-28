@@ -36,6 +36,17 @@ export enum ResponseMessage {
   CATEGORY_ALREADY_EXISTS = "Category already exists.",
   CANNOT_DELETE_CATEGORY_WITH_PRODUCTS = "Cannot delete category with associated products.",
 
+  PRODUCT_CREATED_SUCCESS = "Product created successfully.",
+  PRODUCT_UPDATED_SUCCESS = "Product updated successfully.",
+  PRODUCT_DELETED_SUCCESS = "Product deleted successfully.",
+  PRODUCT_NOT_FOUND = "Product not found.",
+  PRODUCT_OUT_OF_STOCK = "Product is out of stock.",
+  INVALID_STOCK_QUANTITY = "Invalid stock quantity.",
+  INVALID_PRICE = "Invalid product price.",
+  STORE_NOT_FOUND = "Store not found.",
+  UNAUTHORIZED_PRODUCT_ACCESS = "You can only manage your own products.",
+
+
   VALIDATION_ERROR = "Validation error.",
   PASSWORDS_DO_NOT_MATCH = "Passwords do not match.",
   PASSWORD_REQUIRED = "Password is required.",
@@ -43,3 +54,7 @@ export enum ResponseMessage {
   INTERNAL_ERROR = "Internal server error.",
   SUCCESS = "Success.",
 }
+
+
+
+
