@@ -5,6 +5,7 @@ import { Request, Response, NextFunction } from "express";
 
 export const validateRequest = (schema: ObjectSchema) => {
     return (req: Request, res: Response, next: NextFunction) => {
+        try {
         const {error, value} =schema.validate(req.body, {
             abortEarly : false,
             stripUnknown : true,
@@ -26,7 +27,11 @@ export const validateRequest = (schema: ObjectSchema) => {
      
         req.body = value;
         next();    
+    } catch (error : any) {
+        next(error)
     }
+}
+
 }
 
 

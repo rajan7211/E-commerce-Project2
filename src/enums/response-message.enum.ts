@@ -29,6 +29,13 @@ export enum ResponseMessage {
   UNAUTHORIZED = "Unauthorized access.",
   INVALID_TOKEN = "Invalid or expired token.",
 
+  CATEGORY_CREATED_SUCCESS = "Category created successfully.",
+  CATEGORY_UPDATED_SUCCESS = "Category updated successfully.",
+  CATEGORY_DELETED_SUCCESS = "Category deleted successfully.",
+  CATEGORY_NOT_FOUND = "Category not found.",
+  CATEGORY_ALREADY_EXISTS = "Category already exists.",
+  CANNOT_DELETE_CATEGORY_WITH_PRODUCTS = "Cannot delete category with associated products.",
+
   VALIDATION_ERROR = "Validation error.",
   PASSWORDS_DO_NOT_MATCH = "Passwords do not match.",
   PASSWORD_REQUIRED = "Password is required.",

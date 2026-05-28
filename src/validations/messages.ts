@@ -40,7 +40,8 @@ export const validationMessages = {
     MAX: "Password must not exceed 100 characters",
     REQUIRED: "Password is required",
     mismatch: "Passwords do not match",
-    PATTERN: "Password must contain uppercase, lowercase, number, and special character",
+    PATTERN:
+      "Password must contain uppercase, lowercase, number, and special character",
   },
 
   CONFIRMPASSWORD: {
@@ -56,26 +57,17 @@ export const validationMessages = {
     EMAIL_NOT_VERIFIED: "Please verify your email first",
     INVALID_CREDENTIALS: "Invalid email or password",
   },
+
+  CATEGORY: {
+    NAME: {
+      EMPTY: "Category name is required.",
+      MIN: "Category name must be at least 2 characters.",
+      MAX: "Category name must not exceed 40 characters.",
+      PATTERN: "Category name can only contain letters and spaces.",
+      REQUIRED: "Category name is required.",
+    },
+  },
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

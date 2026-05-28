@@ -95,6 +95,58 @@ const options = {
           },
         },
 
+
+                Category: {
+          type: "object",
+          properties: {
+            id: { type: "number", example: 1 },
+            category_name: { type: "string", example: "Electronics" },
+            created_at: { type: "string", format: "date-time" },
+            updated_at: { type: "string", format: "date-time" },
+          },
+        },
+        CreateCategoryRequest: {
+          type: "object",
+          required: ["category_name"],
+          properties: {
+            category_name: {
+              type: "string",
+              example: "Electronics",
+              minLength: 2,
+              maxLength: 50,
+              pattern: "^[a-zA-Z\\s]+$",
+            },
+          },
+        },
+        UpdateCategoryRequest: {
+          type: "object",
+          properties: {
+            category_name: {
+              type: "string",
+              example: "Electronic Devices",
+              minLength: 2,
+              maxLength: 50,
+              pattern: "^[a-zA-Z\\s]+$",
+            },
+          },
+        },
+        CategoryListResponse: {
+          type: "object",
+          properties: {
+            categories: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  id: { type: "number", example: 1 },
+                  category_name: { type: "string", example: "Electronics" },
+                },
+              },
+            },
+            total: { type: "number", example: 5 },
+          },
+        },
+
         ErrorResponse: {
           type: "object",
           properties: {
@@ -111,6 +163,7 @@ const options = {
           },
         },
       },
+ 
       securitySchemes: {
         bearerAuth: {
           type: "http",
@@ -124,3 +177,13 @@ const options = {
 };
 
 export const specs = swaggerJsdoc(options);
+
+
+
+
+
+
+
+
+
+
