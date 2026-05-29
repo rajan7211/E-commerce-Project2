@@ -106,20 +106,18 @@ export const categoryExists = async (category_name : string):Promise<boolean> =>
     try {
         const repository = getRepository();
 
-        const count = await repository.findOne ({
-            where : { category_name},
-        }) ;
-        return !! Category; 
-        } catch (error : any) {
-            console.error("category categoryExists error :", error);
-            throw error;
-        }
-};
+       const existingCategory = await repository.findOne({
+         where : {category_name},
+       });
 
-
-
-
-
+return !! existingCategory;
+      }
+       catch(error : any) {
+        console.error("Category CategoryExistis error:" , error);
+        throw error;
+        
+       }
+      };
 
 
 

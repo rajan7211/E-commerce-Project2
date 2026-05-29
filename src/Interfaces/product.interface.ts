@@ -1,3 +1,5 @@
+import { Category } from "../entities/Category";
+
 export interface CreateProductRequestBody {
     product_name : string;
     product_price: number;
@@ -15,7 +17,6 @@ export interface UpdateProductRequestBody {
     product_description? : string;
     stock ? : number;
     category_id? : number;
-
 }
 
 
@@ -36,6 +37,7 @@ export interface ProductResponse {
      created_at ? : Date;
      updated_at ? : Date;
 }
+
 export interface ProductListResponse{
     products : ProductResponse[];
     total : number;

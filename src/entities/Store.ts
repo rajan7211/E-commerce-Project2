@@ -1,6 +1,12 @@
 import {
-  Entity, PrimaryGeneratedColumn, Column,
-  ManyToOne, JoinColumn, OneToMany, CreateDateColumn   
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  JoinColumn,
+  OneToMany,
+  CreateDateColumn,
+  UpdateDateColumn,
 } from "typeorm";
 import { User } from "./User";
 import { Product } from "./Product";
@@ -14,25 +20,20 @@ export class Store {
   store_name: string;
 
   @Column({ type: "text", nullable: true })
-  store_description: string;
+  store_description: string | null;
 
   @Column({ type: "varchar", nullable: true })
-  store_logo: string;
-
+  store_logo: string | null;
   @CreateDateColumn()
   created_at: Date;
 
-  @ManyToOne(() => User, (user) => user.stores)  
+  @UpdateDateColumn()
+  updated_at: Date;
+
+  @ManyToOne(() => User, (user) => user.stores)
   @JoinColumn({ name: "user_id" })
   user: User;
 
   @OneToMany(() => Product, (product) => product.store)
   products: Product[];
 }
-
-
-
-
-
-
-

@@ -3,6 +3,8 @@ import dotenv from "dotenv";
 import authRoutes from './routes/auth';
 import categoryRoutes from "./routes/category.route"
 import { errorHandler } from "./middlewares/error-handler.middleware";
+import productRoutes from './routes/product.route'
+import storeRoutes from './routes/store.route'
 
 dotenv.config();
 
@@ -16,6 +18,7 @@ const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
 
 
 app.use("/api-docs" , swaggerUi.serve, swaggerUi.setup(specs));
@@ -32,6 +35,9 @@ app.get('/', (req, res) => {
 // Auth routes
 app.use('/auth', authRoutes);
 app.use("/categories" , categoryRoutes);
+app.use("/products" , productRoutes);
+app.use("/stores" , storeRoutes);
+
 
 
 app.use((req, res) => {

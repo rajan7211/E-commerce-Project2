@@ -5,13 +5,14 @@ import {
   ManyToOne,
   OneToMany,
   JoinColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
 } from "typeorm";
 
 import { Store } from "./Store";
 import { Category } from "./Category";
 import { OrderItem } from "./OrderItem";
 import { CartItem } from "./CartItem";
-
 
 @Entity("product")
 export class Product {
@@ -30,6 +31,12 @@ export class Product {
   @Column({ type: "int" })
   stock: number;
 
+  @CreateDateColumn()
+  created_at: Date;
+
+  @UpdateDateColumn()
+  updated_at: Date;
+
   @ManyToOne(() => Store, (store) => store.products)
   @JoinColumn({ name: "store_id" })
   store: Store;
@@ -44,8 +51,12 @@ export class Product {
   @OneToMany(() => CartItem, (cartItem) => cartItem.product)
   cartItems: CartItem[];
 
-
 }
+
+
+
+
+
 
 
 

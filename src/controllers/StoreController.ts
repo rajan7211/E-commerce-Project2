@@ -1,20 +1,18 @@
 import { Request, Response } from "express";
 import {
-  create as createProductService,
-  findAll as findAllProductsService,
-  findById as findProductByIdService,
-  findByStore as findProductsByStoreService,
-  update as updateProductService,
-  deleteById as deleteProductService,
-  updateStock as updateStockService,
-} from "../services/ProductService";
+  create as createStoreService,
+  findAll as findAllStoresService,
+  findById as findStoreByIdService,
+  findByUser as findStoresByUserService,
+  update as updateStoreService,
+  deleteById as deleteStoreService,
+} from "../services/StoreService";
 import {
-  CreateProductRequestBody,
-  UpdateProductRequestBody,
-  ProductQueryParams,
-} from "../Interfaces/product.interface";
+  CreateStoreRequestBody,
+  UpdateStoreRequestBody,
+} from "../Interfaces/store.interface";
 
-
+// CREATE STORE 
 export const create = async (req: Request, res: Response) => {
   try {
     const userId = req.user?.userId;
@@ -25,8 +23,8 @@ export const create = async (req: Request, res: Response) => {
       });
     }
 
-    const data: CreateProductRequestBody = req.body;
-    const result = await createProductService(data, userId);
+    const data: CreateStoreRequestBody = req.body;
+    const result = await createStoreService(data, userId);
 
     res.status(result.statusCode).json({
       success: result.success,
@@ -34,7 +32,7 @@ export const create = async (req: Request, res: Response) => {
       data: result.data,
     });
   } catch (error: any) {
-    console.error("Product controller create error:", error);
+    console.error("Store controller create error:", error);
     const statusCode = error.statusCode || 400;
 
     res.status(statusCode).json({
@@ -44,20 +42,10 @@ export const create = async (req: Request, res: Response) => {
   }
 };
 
+// FIND ALL STORES 
 export const findAll = async (req: Request, res: Response) => {
   try {
-    const params: ProductQueryParams = {
-      category_id: req.query.category_id ? parseInt(req.query.category_id as string) : undefined,
-      store_id: req.query.store_id ? parseInt(req.query.store_id as string) : undefined,
-      min_price: req.query.min_price ? parseFloat(req.query.min_price as string) : undefined,
-      max_price: req.query.max_price ? parseFloat(req.query.max_price as string) : undefined,
-      in_stock: req.query.in_stock === "true",
-      search: req.query.search as string | undefined,
-      page: req.query.page ? parseInt(req.query.page as string) : undefined,
-      limit: req.query.limit ? parseInt(req.query.limit as string) : undefined,
-    };
-
-    const result = await findAllProductsService(params);
+    const result = await findAllStoresService();
 
     res.status(result.statusCode).json({
       success: result.success,
@@ -65,7 +53,7 @@ export const findAll = async (req: Request, res: Response) => {
       data: result.data,
     });
   } catch (error: any) {
-    console.error("Product controller findAll error:", error);
+    console.error("Store controller findAll error:", error);
     const statusCode = error.statusCode || 400;
 
     res.status(statusCode).json({
@@ -75,6 +63,7 @@ export const findAll = async (req: Request, res: Response) => {
   }
 };
 
+// FIND STORE BY ID 
 export const findById = async (req: Request, res: Response) => {
   try {
     const id = parseInt(req.params.id as string);
@@ -82,11 +71,11 @@ export const findById = async (req: Request, res: Response) => {
     if (isNaN(id)) {
       return res.status(400).json({
         success: false,
-        message: "Invalid product ID",
+        message: "Invalid store ID",
       });
     }
 
-    const result = await findProductByIdService(id);
+    const result = await findStoreByIdService(id);
 
     res.status(result.statusCode).json({
       success: result.success,
@@ -94,7 +83,7 @@ export const findById = async (req: Request, res: Response) => {
       data: result.data,
     });
   } catch (error: any) {
-    console.error("Product controller findById error:", error);
+    console.error("Store controller findById error:", error);
     const statusCode = error.statusCode || 400;
 
     res.status(statusCode).json({
@@ -104,7 +93,8 @@ export const findById = async (req: Request, res: Response) => {
   }
 };
 
-export const findByStore = async (req: Request, res: Response) => {
+//  FIND STORES BY USER 
+export const findByUser = async (req: Request, res: Response) => {
   try {
     const userId = req.user?.userId;
     if (!userId) {
@@ -114,16 +104,7 @@ export const findByStore = async (req: Request, res: Response) => {
       });
     }
 
-    const storeId = parseInt(req.params.storeId as string);
-
-    if (isNaN(storeId)) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid store ID",
-      });
-    }
-
-    const result = await findProductsByStoreService(storeId, userId);
+    const result = await findStoresByUserService(userId);
 
     res.status(result.statusCode).json({
       success: result.success,
@@ -131,7 +112,7 @@ export const findByStore = async (req: Request, res: Response) => {
       data: result.data,
     });
   } catch (error: any) {
-    console.error("Product controller findByStore error:", error);
+    console.error("Store controller findByUser error:", error);
     const statusCode = error.statusCode || 400;
 
     res.status(statusCode).json({
@@ -141,6 +122,7 @@ export const findByStore = async (req: Request, res: Response) => {
   }
 };
 
+// UPDATE STORE 
 export const update = async (req: Request, res: Response) => {
   try {
     const userId = req.user?.userId;
@@ -156,12 +138,12 @@ export const update = async (req: Request, res: Response) => {
     if (isNaN(id)) {
       return res.status(400).json({
         success: false,
-        message: "Invalid product ID",
+        message: "Invalid store ID",
       });
     }
 
-    const data: UpdateProductRequestBody = req.body;
-    const result = await updateProductService(id, data, userId);
+    const data: UpdateStoreRequestBody = req.body;
+    const result = await updateStoreService(id, data, userId);
 
     res.status(result.statusCode).json({
       success: result.success,
@@ -169,7 +151,7 @@ export const update = async (req: Request, res: Response) => {
       data: result.data,
     });
   } catch (error: any) {
-    console.error("Product controller update error:", error);
+    console.error("Store controller update error:", error);
     const statusCode = error.statusCode || 400;
 
     res.status(statusCode).json({
@@ -179,6 +161,7 @@ export const update = async (req: Request, res: Response) => {
   }
 };
 
+//  DELETE STORE 
 export const deleteById = async (req: Request, res: Response) => {
   try {
     const userId = req.user?.userId;
@@ -194,11 +177,11 @@ export const deleteById = async (req: Request, res: Response) => {
     if (isNaN(id)) {
       return res.status(400).json({
         success: false,
-        message: "Invalid product ID",
+        message: "Invalid store ID",
       });
     }
 
-    const result = await deleteProductService(id, userId);
+    const result = await deleteStoreService(id, userId);
 
     res.status(result.statusCode).json({
       success: result.success,
@@ -206,7 +189,7 @@ export const deleteById = async (req: Request, res: Response) => {
       data: result.data,
     });
   } catch (error: any) {
-    console.error("Product controller deleteById error:", error);
+    console.error("Store controller deleteById error:", error);
     const statusCode = error.statusCode || 400;
 
     res.status(statusCode).json({
@@ -216,51 +199,10 @@ export const deleteById = async (req: Request, res: Response) => {
   }
 };
 
-export const updateStock = async (req: Request, res: Response) => {
-  try {
-    const userId = req.user?.userId;
-    if (!userId) {
-      return res.status(401).json({
-        success: false,
-        message: "Unauthorized",
-      });
-    }
 
-    const id = parseInt(req.params.id as string);
 
-    if (isNaN(id)) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid product ID",
-      });
-    }
 
-    const { quantity } = req.body;
 
-    if (!quantity || typeof quantity !== "number") {
-      return res.status(400).json({
-        success: false,
-        message: "Quantity is required",
-      });
-    }
-
-    const result = await updateStockService(id, quantity, userId);
-
-    res.status(result.statusCode).json({
-      success: result.success,
-      message: result.message,
-      data: result.data,
-    });
-  } catch (error: any) {
-    console.error("Product controller updateStock error:", error);
-    const statusCode = error.statusCode || 400;
-
-    res.status(statusCode).json({
-      success: false,
-      message: error.message,
-    });
-  }
-};
 
 
 

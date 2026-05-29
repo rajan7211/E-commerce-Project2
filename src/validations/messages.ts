@@ -58,7 +58,7 @@ export const validationMessages = {
     INVALID_CREDENTIALS: "Invalid email or password",
   },
 
-  // category msgs 
+  // category msgs
   CATEGORY: {
     NAME: {
       EMPTY: "Category name is required.",
@@ -69,14 +69,15 @@ export const validationMessages = {
     },
   },
 
-// products msgs 
+  // products msgs
 
   PRODUCT: {
     NAME: {
       EMPTY: "Product name is required.",
       MIN: "Product name must be at least 2 characters.",
       MAX: "Product name must not exceed 100 characters.",
-      PATTERN: "Product name can only contain letters, numbers, spaces, hyphens, and underscores.",
+      PATTERN:
+        "Product name can only contain letters, numbers, spaces, hyphens, and underscores.",
       REQUIRED: "Product name is required.",
     },
     PRICE: {
@@ -110,10 +111,26 @@ export const validationMessages = {
       REQUIRED: "Store ID is required.",
     },
   },
+  // store msg
 
-  
+  STORE: {
+    NAME: {
+      EMPTY: "Store name is required.",
+      MIN: "Store name must be at least 2 characters.",
+      MAX: "Store name must not exceed 100 characters.",
+      PATTERN:
+        "Store name can only contain letters, numbers, spaces, and underscores.",
+      REQUIRED: "Store name is required.",
+    },
+    DESCRIPTION: {
+      MAX: "Store description must not exceed 1000 characters.",
+    },
+    LOGO: {
+      INVALID: "Store logo must be a valid URL.",
+    },
+  },
+
 };
-
 
 
 

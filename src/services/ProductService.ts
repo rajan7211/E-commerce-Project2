@@ -56,7 +56,7 @@ export const create = async (
     if (exists) {
       throw createError(ResponseMessage.CATEGORY_ALREADY_EXISTS, HttpStatus.CONFLICT);
     }
-
+// create product 
     const product = await createProductRepo({
       product_name: data.product_name.trim(),
       product_price: data.product_price,
@@ -92,7 +92,7 @@ export const create = async (
     throw error;
   }
 };
-
+// find all products 
 export const findAll = async (
   params?: ProductQueryParams
 ): Promise<ServiceResponse<ProductListResponse>> => {
@@ -127,7 +127,7 @@ export const findAll = async (
     throw error;
   }
 };
-
+//  find by id products 
 export const findById = async (
   id: number
 ): Promise<ServiceResponse<ProductResponse>> => {
@@ -165,7 +165,7 @@ export const findById = async (
     throw error;
   }
 };
-
+// find products by store 
 export const findByStore = async (
   storeId: number,
   userId: number
@@ -216,6 +216,8 @@ export const findByStore = async (
   }
 };
 
+// Update product 
+
 export const update = async (
   id: number,
   data: UpdateProductRequestBody,
@@ -225,66 +227,118 @@ export const update = async (
     const product = await findProductByIdRepo(id);
 
     if (!product) {
-      throw createError(ResponseMessage.PRODUCT_NOT_FOUND, HttpStatus.NOT_FOUND);
+      throw createError(
+        ResponseMessage.PRODUCT_NOT_FOUND,
+        HttpStatus.NOT_FOUND
+      );
     }
 
-    // Verify user owns the store
-    const storeRepository = AppDataSource.getRepository(Store);
+    // Verify ownership
+    const storeRepository =
+      AppDataSource.getRepository(Store);
+
     const store = await storeRepository.findOne({
       where: { id: product.store.id },
       relations: ["user"],
     });
 
     if (!store || store.user.id !== userId) {
-      throw createError(ResponseMessage.UNAUTHORIZED_PRODUCT_ACCESS, HttpStatus.FORBIDDEN);
+      throw createError(
+        ResponseMessage.UNAUTHORIZED_PRODUCT_ACCESS,
+        HttpStatus.FORBIDDEN
+      );
     }
 
-    // Verify category if being updated
-    if (data.category_id) {
-      const categoryRepository = AppDataSource.getRepository(Category);
-      const category = await categoryRepository.findOne({ where: { id: data.category_id } });
+    // update object
+    const updateData: any = {};
+
+    // Product name
+    if (data.product_name !== undefined) {
+      updateData.product_name =
+        data.product_name.trim();
+    }
+
+    // Product price
+    if (data.product_price !== undefined) {
+      updateData.product_price =
+        data.product_price;
+    }
+
+    // Product description
+    if (data.product_description !== undefined) {
+      updateData.product_description =
+        data.product_description?.trim() || null;
+    }
+
+    // Stock
+    if (data.stock !== undefined) {
+      updateData.stock = data.stock;
+    }
+
+    // Category
+    if (data.category_id !== undefined) {
+      const categoryRepository =
+        AppDataSource.getRepository(Category);
+
+      const category =
+        await categoryRepository.findOne({
+          where: { id: data.category_id },
+        });
+
       if (!category) {
-        throw createError(ResponseMessage.CATEGORY_NOT_FOUND, HttpStatus.NOT_FOUND);
+        throw createError(
+          ResponseMessage.CATEGORY_NOT_FOUND,
+          HttpStatus.NOT_FOUND
+        );
       }
-      data.category = category;
+
+      updateData.category = category;
     }
 
-    // Trim and clean data
-    if (data.product_name) {
-      data.product_name = data.product_name.trim();
-    }
-    if (data.product_description) {
-      data.product_description = data.product_description.trim();
-    }
-
-    const updatedProduct = await updateProductRepo(id, data);
+    // Update product
+    const updatedProduct =
+      await updateProductRepo(id, updateData);
 
     return {
       success: true,
       message: ResponseMessage.PRODUCT_UPDATED_SUCCESS,
+
       data: {
         product_id: updatedProduct.product_id,
         product_name: updatedProduct.product_name,
         product_price: updatedProduct.product_price,
-        product_description: updatedProduct.product_description,
+        product_description:
+          updatedProduct.product_description,
         stock: updatedProduct.stock,
+
         category: {
           id: updatedProduct.category.id,
-          category_name: updatedProduct.category.category_name,
+          category_name:
+            updatedProduct.category.category_name,
         },
+
         store: {
           id: updatedProduct.store.id,
-          store_name: updatedProduct.store.store_name,
+          store_name:
+            updatedProduct.store.store_name,
         },
+
         updated_at: updatedProduct.updated_at,
       },
+
       statusCode: HttpStatus.OK,
     };
   } catch (error: any) {
-    console.error("Product service update error:", error);
+    console.error(
+      "Product service update error:",
+      error
+    );
+
     throw error;
   }
 };
+
+// delete by ID 
 
 export const deleteById = async (
   id: number,
@@ -376,7 +430,6 @@ export const updateStock = async (
     throw error;
   }
 };
-
 
 
 

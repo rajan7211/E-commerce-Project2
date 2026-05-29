@@ -46,6 +46,12 @@ export enum ResponseMessage {
   STORE_NOT_FOUND = "Store not found.",
   UNAUTHORIZED_PRODUCT_ACCESS = "You can only manage your own products.",
 
+  STORE_CREATED_SUCCESS = "Store created successfully.",
+  STORE_UPDATED_SUCCESS = "Store updated successfully.",
+  STORE_DELETED_SUCCESS = "Store deleted successfully.",
+  STORE_ALREADY_EXISTS = "Store name is already exists.",
+  CANNOT_DELETE_STORE_WITH_PRODUCTS = "Cannot delete store with associated products.",
+  UNAUTHORIZED_STORE_ACCESS = "You can only manage your own stores.",
 
   VALIDATION_ERROR = "Validation error.",
   PASSWORDS_DO_NOT_MATCH = "Passwords do not match.",
@@ -54,7 +60,3 @@ export enum ResponseMessage {
   INTERNAL_ERROR = "Internal server error.",
   SUCCESS = "Success.",
 }
-
-
-
-

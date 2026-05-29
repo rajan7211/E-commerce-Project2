@@ -95,8 +95,7 @@ const options = {
           },
         },
 
-
-                Category: {
+        Category: {
           type: "object",
           properties: {
             id: { type: "number", example: 1 },
@@ -147,6 +146,144 @@ const options = {
           },
         },
 
+        Product: {
+          type: "object",
+          properties: {
+            product_id: { type: "number", example: 1 },
+            product_name: { type: "string", example: "Laptop" },
+            product_price: { type: "number", example: 999.99 },
+            product_description: {
+              type: "string",
+              example: "High performance laptop",
+            },
+            stock: { type: "number", example: 30 },
+            category: {
+              type: "object",
+              properties: {
+                id: { type: "number", example: 1 },
+                category_name: { type: "string", example: "Electronics" },
+              },
+            },
+            store: {
+              type: "object",
+              properties: {
+                id: { type: "number", example: 1 },
+                store_name: { type: "string", example: "Tech Store" },
+              },
+            },
+            created_at: { type: "string", format: "date-time" },
+            updated_at: { type: "string", format: "date-time" },
+          },
+        },
+        CreateProductRequest: {
+          type: "object",
+          required: [
+            "product_name",
+            "product_price",
+            "stock",
+            "category_id",
+            "store_id",
+          ],
+          properties: {
+            product_name: { type: "string", example: "Laptop" },
+            product_price: { type: "number", example: 999.99 },
+            product_description: {
+              type: "string",
+              example: "High performance laptop",
+            },
+            stock: { type: "number", example: 50 },
+            category_id: { type: "number", example: 1 },
+            store_id: { type: "number", example: 1 },
+          },
+        },
+        UpdateProductRequest: {
+          type: "object",
+          properties: {
+            product_name: { type: "string", example: "Updated Laptop" },
+            product_price: { type: "number", example: 899.99 },
+            product_description: {
+              type: "string",
+              example: "Updated description",
+            },
+            stock: { type: "number", example: 45 },
+            category_id: { type: "number", example: 2 },
+          },
+        },
+        ProductListResponse: {
+          type: "object",
+          properties: {
+            products: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  product_id: { type: "number", example: 1 },
+                  product_name: { type: "string", example: "Laptop" },
+                  product_price: { type: "number", example: 999.99 },
+                  stock: { type: "number", example: 50 },
+                },
+              },
+            },
+            total: { type: "number", example: 100 },
+          },
+        },
+
+ Store: {
+          type: "object",
+          properties: {
+            id: { type: "number", example: 1 },
+            store_name: { type: "string", example: "Tech Store" },
+            store_description: { type: "string", example: "Best electronics store" },
+            store_logo: { type: "string", example: "https://example.com/logo.png" },
+            user: {
+              type: "object",
+              properties: {
+                id: { type: "number", example: 1 },
+                first_name: { type: "string", example: "John" },
+                last_name: { type: "string", example: "Doe" },
+                email: { type: "string", example: "john@example.com" },
+              },
+            },
+            created_at: { type: "string", format: "date-time" },
+            updated_at: { type: "string", format: "date-time" },
+          },
+        },
+        CreateStoreRequest: {
+          type: "object",
+          required: ["store_name"],
+          properties: {
+            store_name: { type: "string", example: "Tech Store" },
+            store_description: { type: "string", example: "Best electronics store" },
+            store_logo: { type: "string", example: "https://example.com/logo.png" },
+          },
+        },
+        UpdateStoreRequest: {
+          type: "object",
+          properties: {
+            store_name: { type: "string", example: "Updated Tech Store" },
+            store_description: { type: "string", example: "Updated description" },
+            store_logo: { type: "string", example: "https://example.com/new-logo.png" },
+          },
+        },
+        StoreListResponse: {
+          type: "object",
+          properties: {
+            stores: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  id: { type: "number", example: 1 },
+                  store_name: { type: "string", example: "Tech Store" },
+                  store_description: { type: "string", example: "Best electronics store" },
+                },
+              },
+            },
+            total: { type: "number", example: 10 },
+          },
+        },
+
+
         ErrorResponse: {
           type: "object",
           properties: {
@@ -163,7 +300,7 @@ const options = {
           },
         },
       },
- 
+
       securitySchemes: {
         bearerAuth: {
           type: "http",
@@ -177,13 +314,3 @@ const options = {
 };
 
 export const specs = swaggerJsdoc(options);
-
-
-
-
-
-
-
-
-
-
