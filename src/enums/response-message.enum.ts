@@ -54,6 +54,21 @@ export enum ResponseMessage {
   CANNOT_DELETE_STORE_WITH_PRODUCTS = "Cannot delete store with associated products.",
   UNAUTHORIZED_STORE_ACCESS = "You can only manage your own stores.",
 
+ // CART MESSAGES (NEW)
+  CART_CREATED_SUCCESS = "Cart created successfully.",
+  CART_UPDATED_SUCCESS = "Cart updated successfully.",
+  CART_ITEM_ADDED_SUCCESS = "Item added to cart successfully.",
+  CART_ITEM_UPDATED_SUCCESS = "Cart item updated successfully.",
+  CART_ITEM_REMOVED_SUCCESS = "Item removed from cart successfully.",
+  CART_CLEARED_SUCCESS = "Cart cleared successfully.",
+  CART_NOT_FOUND = "Cart not found.",
+  CART_ITEM_NOT_FOUND = "Cart item not found.",
+  INVALID_QUANTITY = "Invalid quantity. Must be greater than 0.",
+  QUANTITY_EXCEEDS_STOCK = "Quantity exceeds available stock.",
+  PRODUCT_ALREADY_IN_CART = "Product already exists in cart.",
+
+
+
   VALIDATION_ERROR = "Validation error.",
   PASSWORDS_DO_NOT_MATCH = "Passwords do not match.",
   PASSWORD_REQUIRED = "Password is required.",
