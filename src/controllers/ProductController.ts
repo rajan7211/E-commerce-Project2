@@ -14,7 +14,7 @@ import {
   ProductQueryParams,
 } from "../Interfaces/product.interface";
 
-
+//  CREATE PRODUCT 
 export const create = async (req: Request, res: Response) => {
   try {
     const userId = req.user?.userId;
@@ -26,7 +26,9 @@ export const create = async (req: Request, res: Response) => {
     }
 
     const data: CreateProductRequestBody = req.body;
-    const result = await createProductService(data, userId);
+    const files = req.files as Express.Multer.File[] | undefined;
+
+    const result = await createProductService(data, userId, files);
 
     res.status(result.statusCode).json({
       success: result.success,
@@ -44,6 +46,7 @@ export const create = async (req: Request, res: Response) => {
   }
 };
 
+//  FIND ALL PRODUCTS 
 export const findAll = async (req: Request, res: Response) => {
   try {
     const params: ProductQueryParams = {
@@ -75,6 +78,7 @@ export const findAll = async (req: Request, res: Response) => {
   }
 };
 
+//  FIND PRODUCT BY ID 
 export const findById = async (req: Request, res: Response) => {
   try {
     const id = parseInt(req.params.id as string);
@@ -104,6 +108,7 @@ export const findById = async (req: Request, res: Response) => {
   }
 };
 
+// FIND PRODUCTS BY STORE 
 export const findByStore = async (req: Request, res: Response) => {
   try {
     const userId = req.user?.userId;
@@ -141,6 +146,7 @@ export const findByStore = async (req: Request, res: Response) => {
   }
 };
 
+//  UPDATE PRODUCT 
 export const update = async (req: Request, res: Response) => {
   try {
     const userId = req.user?.userId;
@@ -161,7 +167,9 @@ export const update = async (req: Request, res: Response) => {
     }
 
     const data: UpdateProductRequestBody = req.body;
-    const result = await updateProductService(id, data, userId);
+    const files = req.files as Express.Multer.File[] | undefined;
+
+    const result = await updateProductService(id, data, userId, files);
 
     res.status(result.statusCode).json({
       success: result.success,
@@ -179,6 +187,7 @@ export const update = async (req: Request, res: Response) => {
   }
 };
 
+// DELETE PRODUCT
 export const deleteById = async (req: Request, res: Response) => {
   try {
     const userId = req.user?.userId;
@@ -216,6 +225,7 @@ export const deleteById = async (req: Request, res: Response) => {
   }
 };
 
+// UPDATE STOCK
 export const updateStock = async (req: Request, res: Response) => {
   try {
     const userId = req.user?.userId;
@@ -261,7 +271,6 @@ export const updateStock = async (req: Request, res: Response) => {
     });
   }
 };
-
 
 
 

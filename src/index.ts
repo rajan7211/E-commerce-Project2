@@ -11,16 +11,26 @@ dotenv.config();
 import express = require ("express");
 import swaggerUi from "swagger-ui-express";
 import { specs } from "./config/swagger";
+import { tr } from "zod/locales";
+import path = require("node:path");
 
 
 
 const app = express();
 
 app.use(express.json());
+// url Encoded 
+app.use(express.urlencoded({extended: true}));
+
+// server uploaded images publicly 
+app.use("/public" , express.static(path.join(__dirname,"../public")));
+
+
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 
-
+// swagger documentation 
 app.use("/api-docs" , swaggerUi.serve, swaggerUi.setup(specs));
 
 

@@ -23,9 +23,18 @@ import {
 import { ServiceResponse } from "../Interfaces/service-response.interface";
 import { createError } from "../middlewares/error-handler.middleware";
 
+// Helper to generate image URLs
+const generateImageUrls = (files: Express.Multer.File[]): string[] => {
+  const baseUrl = process.env.BASE_URL || "http://localhost:3000";
+  return files.map((file) => `${baseUrl}/public/uploads/products/${file.filename}`);
+};
+
+
+// CREATE PRODUCT
 export const create = async (
   data: CreateProductRequestBody,
-  userId: number
+  userId: number,
+  files?: Express.Multer.File[]
 ): Promise<ServiceResponse<ProductResponse>> => {
   try {
     const categoryRepository = AppDataSource.getRepository(Category);
@@ -54,14 +63,18 @@ export const create = async (
     // Check if product already exists in this store
     const exists = await checkProductExists(data.product_name, data.store_id);
     if (exists) {
-      throw createError(ResponseMessage.CATEGORY_ALREADY_EXISTS, HttpStatus.CONFLICT);
+      throw createError(ResponseMessage.PRODUCT_ALREADY_EXISTS, HttpStatus.CONFLICT);
     }
-// create product 
+
+    // Generate image URLs if files uploaded
+    const images = files && files.length > 0 ? generateImageUrls(files) : null;
+
     const product = await createProductRepo({
       product_name: data.product_name.trim(),
       product_price: data.product_price,
       product_description: data.product_description?.trim() || null,
       stock: data.stock,
+      images,
       category,
       store,
     });
@@ -75,6 +88,7 @@ export const create = async (
         product_price: product.product_price,
         product_description: product.product_description,
         stock: product.stock,
+        images: product.images,
         category: {
           id: product.category.id,
           category_name: product.category.category_name,
@@ -92,7 +106,8 @@ export const create = async (
     throw error;
   }
 };
-// find all products 
+
+// find all product   
 export const findAll = async (
   params?: ProductQueryParams
 ): Promise<ServiceResponse<ProductListResponse>> => {
@@ -109,6 +124,7 @@ export const findAll = async (
           product_price: product.product_price,
           product_description: product.product_description,
           stock: product.stock,
+          images: product.images,
           category: {
             id: product.category.id,
             category_name: product.category.category_name,
@@ -119,6 +135,8 @@ export const findAll = async (
           },
         })),
         total,
+        page: params?.page || 1,
+        limit: params?.limit || 10,
       },
       statusCode: HttpStatus.OK,
     };
@@ -127,7 +145,8 @@ export const findAll = async (
     throw error;
   }
 };
-//  find by id products 
+
+//  FIND PRODUCT BY ID 
 export const findById = async (
   id: number
 ): Promise<ServiceResponse<ProductResponse>> => {
@@ -147,6 +166,7 @@ export const findById = async (
         product_price: product.product_price,
         product_description: product.product_description,
         stock: product.stock,
+        images: product.images,
         category: {
           id: product.category.id,
           category_name: product.category.category_name,
@@ -165,7 +185,8 @@ export const findById = async (
     throw error;
   }
 };
-// find products by store 
+
+// FIND PRODUCTS BY STORE
 export const findByStore = async (
   storeId: number,
   userId: number
@@ -197,6 +218,7 @@ export const findByStore = async (
           product_price: product.product_price,
           product_description: product.product_description,
           stock: product.stock,
+          images: product.images,
           category: {
             id: product.category.id,
             category_name: product.category.category_name,
@@ -216,58 +238,47 @@ export const findByStore = async (
   }
 };
 
-// Update product 
-
+// UPDATE PRODUCT 
 export const update = async (
   id: number,
   data: UpdateProductRequestBody,
-  userId: number
+  userId: number,
+  files?: Express.Multer.File[]
 ): Promise<ServiceResponse<ProductResponse>> => {
   try {
     const product = await findProductByIdRepo(id);
 
     if (!product) {
-      throw createError(
-        ResponseMessage.PRODUCT_NOT_FOUND,
-        HttpStatus.NOT_FOUND
-      );
+      throw createError(ResponseMessage.PRODUCT_NOT_FOUND, HttpStatus.NOT_FOUND);
     }
 
     // Verify ownership
-    const storeRepository =
-      AppDataSource.getRepository(Store);
-
+    const storeRepository = AppDataSource.getRepository(Store);
     const store = await storeRepository.findOne({
       where: { id: product.store.id },
       relations: ["user"],
     });
 
     if (!store || store.user.id !== userId) {
-      throw createError(
-        ResponseMessage.UNAUTHORIZED_PRODUCT_ACCESS,
-        HttpStatus.FORBIDDEN
-      );
+      throw createError(ResponseMessage.UNAUTHORIZED_PRODUCT_ACCESS, HttpStatus.FORBIDDEN);
     }
 
-    // update object
+    // Update object
     const updateData: any = {};
 
     // Product name
     if (data.product_name !== undefined) {
-      updateData.product_name =
-        data.product_name.trim();
+      updateData.product_name = data.product_name.trim();
     }
 
     // Product price
     if (data.product_price !== undefined) {
-      updateData.product_price =
-        data.product_price;
+      updateData.product_price = data.product_price;
     }
 
     // Product description
     if (data.product_description !== undefined) {
-      updateData.product_description =
-        data.product_description?.trim() || null;
+      updateData.product_description = data.product_description?.trim() || null;
     }
 
     // Stock
@@ -275,71 +286,57 @@ export const update = async (
       updateData.stock = data.stock;
     }
 
-    // Category
-    if (data.category_id !== undefined) {
-      const categoryRepository =
-        AppDataSource.getRepository(Category);
+    // Images (if new files uploaded)
+    if (files && files.length > 0) {
+      updateData.images = generateImageUrls(files);
+    }
 
-      const category =
-        await categoryRepository.findOne({
-          where: { id: data.category_id },
-        });
+    // Category
+    if (data.category_id !== undefined && data.category_id !== null) {
+      const categoryRepository = AppDataSource.getRepository(Category);
+      const category = await categoryRepository.findOne({
+        where: { id: data.category_id },
+      });
 
       if (!category) {
-        throw createError(
-          ResponseMessage.CATEGORY_NOT_FOUND,
-          HttpStatus.NOT_FOUND
-        );
+        throw createError(ResponseMessage.CATEGORY_NOT_FOUND, HttpStatus.NOT_FOUND);
       }
 
       updateData.category = category;
     }
 
     // Update product
-    const updatedProduct =
-      await updateProductRepo(id, updateData);
+    const updatedProduct = await updateProductRepo(id, updateData);
 
     return {
       success: true,
       message: ResponseMessage.PRODUCT_UPDATED_SUCCESS,
-
       data: {
         product_id: updatedProduct.product_id,
         product_name: updatedProduct.product_name,
         product_price: updatedProduct.product_price,
-        product_description:
-          updatedProduct.product_description,
+        product_description: updatedProduct.product_description,
         stock: updatedProduct.stock,
-
+        images: updatedProduct.images,
         category: {
           id: updatedProduct.category.id,
-          category_name:
-            updatedProduct.category.category_name,
+          category_name: updatedProduct.category.category_name,
         },
-
         store: {
           id: updatedProduct.store.id,
-          store_name:
-            updatedProduct.store.store_name,
+          store_name: updatedProduct.store.store_name,
         },
-
         updated_at: updatedProduct.updated_at,
       },
-
       statusCode: HttpStatus.OK,
     };
   } catch (error: any) {
-    console.error(
-      "Product service update error:",
-      error
-    );
-
+    console.error("Product service update error:", error);
     throw error;
   }
 };
 
-// delete by ID 
-
+// DELETE PRODUCT 
 export const deleteById = async (
   id: number,
   userId: number
@@ -376,6 +373,7 @@ export const deleteById = async (
   }
 };
 
+// UPDATE STOCK 
 export const updateStock = async (
   productId: number,
   quantity: number,
@@ -410,6 +408,7 @@ export const updateStock = async (
         product_price: updatedProduct.product_price,
         product_description: updatedProduct.product_description,
         stock: updatedProduct.stock,
+        images: updatedProduct.images,
         category: {
           id: updatedProduct.category.id,
           category_name: updatedProduct.category.category_name,
@@ -430,6 +429,23 @@ export const updateStock = async (
     throw error;
   }
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -45,6 +45,7 @@ export enum ResponseMessage {
   INVALID_PRICE = "Invalid product price.",
   STORE_NOT_FOUND = "Store not found.",
   UNAUTHORIZED_PRODUCT_ACCESS = "You can only manage your own products.",
+  PRODUCT_ALREADY_EXISTS = "product already exist in this store",
 
   STORE_CREATED_SUCCESS = "Store created successfully.",
   STORE_UPDATED_SUCCESS = "Store updated successfully.",

@@ -14,6 +14,7 @@ export const create = async (productData: {
   product_price: number;
   product_description: string | null;
   stock: number;
+  images : string[] | null;
   category: Category;
   store: Store;
 }): Promise<Product> => {
@@ -25,6 +26,7 @@ export const create = async (productData: {
       product_price: productData.product_price,
       product_description: productData.product_description ??undefined,
       stock: productData.stock,
+      images : productData.images,
       category: productData.category,
       store: productData.store,
     });
@@ -36,7 +38,8 @@ export const create = async (productData: {
   }
 };
 
-export const findAll = async (params?: ProductQueryParams): Promise<{ products: Product[]; total: number }> => {
+export const findAll = async (params?: ProductQueryParams): 
+Promise<{ products: Product[]; total: number }> => {
   try {
     const repository = getRepository();
 
@@ -192,6 +195,8 @@ export const updateStock = async (
     throw error;
   }
 };
+
+
 
 
 

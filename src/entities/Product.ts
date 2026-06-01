@@ -31,6 +31,10 @@ export class Product {
   @Column({ type: "int" })
   stock: number;
 
+  @Column({type : "json", nullable: true })
+  images: string[] | null;
+  
+
   @CreateDateColumn()
   created_at: Date;
 

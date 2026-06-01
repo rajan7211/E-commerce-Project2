@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { authenticate } from "../middlewares/authenticate.middleware";
 import { validateRequest } from "../middlewares/validation.middleware";
+import { uploadProductImages } from "../middlewares/upload.middleware";
 import { productValidation } from "../validations/product.validation";
 import {
   create,
@@ -20,38 +21,8 @@ const router = Router();
  *   get:
  *     summary: Get all products
  *     tags: [Products]
- *     description: Retrieve a list of all products with optional filters
+ *     description: Retrieve a list of all products with pagination
  *     parameters:
- *       - in: query
- *         name: category_id
- *         schema:
- *           type: integer
- *         description: Filter by category ID
- *       - in: query
- *         name: store_id
- *         schema:
- *           type: integer
- *         description: Filter by store ID
- *       - in: query
- *         name: min_price
- *         schema:
- *           type: number
- *         description: Minimum price filter
- *       - in: query
- *         name: max_price
- *         schema:
- *           type: number
- *         description: Maximum price filter
- *       - in: query
- *         name: in_stock
- *         schema:
- *           type: boolean
- *         description: Filter only in-stock products
- *       - in: query
- *         name: search
- *         schema:
- *           type: string
- *         description: Search by product name
  *       - in: query
  *         name: page
  *         schema:
@@ -95,9 +66,17 @@ const router = Router();
  *                           product_price:
  *                             type: number
  *                             example: 999.99
+ *                           product_description:
+ *                             type: string
+ *                             example: "High performance laptop"
  *                           stock:
  *                             type: number
  *                             example: 50
+ *                           images:
+ *                             type: array
+ *                             items:
+ *                               type: string
+ *                             example: ["http://localhost:3000/public/uploads/products/product-123.jpg"]
  *                           category:
  *                             type: object
  *                             properties:
@@ -115,6 +94,12 @@ const router = Router();
  *                     total:
  *                       type: number
  *                       example: 100
+ *                     page:
+ *                       type: number
+ *                       example: 1
+ *                     limit:
+ *                       type: number
+ *                       example: 10
  *       500:
  *         description: Internal server error
  */
@@ -126,13 +111,13 @@ router.get("/", findAll);
  *   post:
  *     summary: Create a new product
  *     tags: [Products]
- *     description: Create a new product (Authenticated sellers only)
+ *     description: Create a new product with optional image uploads (Authenticated sellers only)
  *     security:
  *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
  *             type: object
  *             required:
@@ -160,11 +145,48 @@ router.get("/", findAll);
  *               store_id:
  *                 type: number
  *                 example: 1
+ *               images:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   format: binary
+ *                 description: Upload up to 10 images (jpeg, jpg, png, gif, webp). Max 5MB each.
  *     responses:
  *       201:
  *         description: Product created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: "Product created successfully."
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     product_id:
+ *                       type: number
+ *                       example: 1
+ *                     product_name:
+ *                       type: string
+ *                       example: "Laptop"
+ *                     product_price:
+ *                       type: number
+ *                       example: 999.99
+ *                     stock:
+ *                       type: number
+ *                       example: 50
+ *                     images:
+ *                       type: array
+ *                       items:
+ *                         type: string
+ *                       example: ["http://localhost:3000/public/uploads/products/product-123.jpg"]
  *       400:
- *         description: Validation error
+ *         description: Validation error or File upload error
  *       401:
  *         description: Unauthorized
  *       403:
@@ -179,6 +201,7 @@ router.get("/", findAll);
 router.post(
   "/",
   authenticate,
+  uploadProductImages,
   validateRequest(productValidation.createProduct),
   create
 );
@@ -200,6 +223,33 @@ router.post(
  *     responses:
  *       200:
  *         description: Product details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: "Success."
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     product_id:
+ *                       type: number
+ *                       example: 1
+ *                     product_name:
+ *                       type: string
+ *                       example: "Laptop"
+ *                     product_price:
+ *                       type: number
+ *                       example: 999.99
+ *                     images:
+ *                       type: array
+ *                       items:
+ *                         type: string
  *       400:
  *         description: Invalid product ID
  *       404:
@@ -215,7 +265,7 @@ router.get("/:id", findById);
  *   put:
  *     summary: Update product
  *     tags: [Products]
- *     description: Update an existing product (Authenticated sellers only)
+ *     description: Update an existing product with optional image uploads (Authenticated sellers only)
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -228,7 +278,7 @@ router.get("/:id", findById);
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
  *             type: object
  *             properties:
@@ -247,11 +297,41 @@ router.get("/:id", findById);
  *               category_id:
  *                 type: number
  *                 example: 2
+ *               images:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   format: binary
+ *                 description: Upload new images to replace existing ones (optional). Max 10 images, 5MB each.
  *     responses:
  *       200:
  *         description: Product updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: "Product updated successfully."
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     product_id:
+ *                       type: number
+ *                       example: 1
+ *                     product_name:
+ *                       type: string
+ *                       example: "Updated Laptop"
+ *                     images:
+ *                       type: array
+ *                       items:
+ *                         type: string
  *       400:
- *         description: Validation error
+ *         description: Validation error or File upload error
  *       401:
  *         description: Unauthorized
  *       403:
@@ -264,6 +344,7 @@ router.get("/:id", findById);
 router.put(
   "/:id",
   authenticate,
+  uploadProductImages,
   validateRequest(productValidation.updateProduct),
   update
 );
@@ -287,6 +368,17 @@ router.put(
  *     responses:
  *       200:
  *         description: Product deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: "Product deleted successfully."
  *       400:
  *         description: Invalid product ID
  *       401:
@@ -298,8 +390,7 @@ router.put(
  *       500:
  *         description: Internal server error
  */
-router.delete("/:id", 
-    authenticate, deleteById);
+router.delete("/:id", authenticate, deleteById);
 
 /**
  * @swagger
@@ -320,6 +411,26 @@ router.delete("/:id",
  *     responses:
  *       200:
  *         description: List of store products
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: "Success."
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     products:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                     total:
+ *                       type: number
  *       400:
  *         description: Invalid store ID
  *       401:
@@ -331,8 +442,7 @@ router.delete("/:id",
  *       500:
  *         description: Internal server error
  */
-router.get("/store/:storeId",
-     authenticate, findByStore);
+router.get("/store/:storeId", authenticate, findByStore);
 
 /**
  * @swagger
@@ -366,6 +476,25 @@ router.get("/store/:storeId",
  *     responses:
  *       200:
  *         description: Stock updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: "Product updated successfully."
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     product_id:
+ *                       type: number
+ *                     stock:
+ *                       type: number
+ *                       example: 40
  *       400:
  *         description: Invalid quantity or insufficient stock
  *       401:
@@ -377,18 +506,9 @@ router.get("/store/:storeId",
  *       500:
  *         description: Internal server error
  */
-router.put("/:id/stock", 
-    authenticate, updateStock);
+router.put("/:id/stock", authenticate, updateStock);
 
 export default router;
-
-
-
-
-
-
-
-
 
 
 
