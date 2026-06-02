@@ -283,6 +283,61 @@ const options = {
           },
         },
 
+// CART SCHEMAS  
+        CartItem: {
+          type: "object",
+          properties: {
+            id: { type: "number", example: 1 },
+            quantity: { type: "number", example: 2 },
+            product: {
+              type: "object",
+              properties: {
+                product_id: { type: "number", example: 1 },
+                product_name: { type: "string", example: "Laptop" },
+                product_price: { type: "number", example: 999.99 },
+                images: {
+                  type: "array",
+                  items: { type: "string" },
+                },
+                stock: { type: "number", example: 50 },
+              },
+            },
+            subtotal: { type: "number", example: 1999.98 },
+          },
+        },
+        Cart: {
+          type: "object",
+          properties: {
+            id: { type: "number", example: 1 },
+            total_price: { type: "number", example: 1999.98 },
+            total_items: { type: "number", example: 2 },
+            items: {
+              type: "array",
+              items: {
+                $ref: "#/components/schemas/CartItem",
+              },
+            },
+            created_at: { type: "string", format: "date-time" },
+            updated_at: { type: "string", format: "date-time" },
+          },
+        },
+        AddToCartRequest: {
+          type: "object",
+          required: ["product_id", "quantity"],
+          properties: {
+            product_id: { type: "number", example: 1 },
+            quantity: { type: "number", example: 2 },
+          },
+        },
+        UpdateCartItemRequest: {
+          type: "object",
+          required: ["quantity"],
+          properties: {
+            quantity: { type: "number", example: 3 },
+          },
+        },
+
+
 
         ErrorResponse: {
           type: "object",

@@ -1,11 +1,11 @@
 import {
-  Entity, 
-  PrimaryGeneratedColumn, 
+  Entity,
+  PrimaryGeneratedColumn,
   Column,
-  ManyToOne, 
+  ManyToOne,
   JoinColumn,
   CreateDateColumn,
-  UpdateDateColumn
+  UpdateDateColumn,
 } from "typeorm";
 
 import { Cart } from "./Cart";
@@ -16,7 +16,7 @@ export class CartItem {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: "int", default : 1 })
+  @Column({ type: "int", default: 1 })
   quantity: number;
 
   @CreateDateColumn()
@@ -25,7 +25,7 @@ export class CartItem {
   @UpdateDateColumn()
   updated_at: Date;
 
- @ManyToOne(() => Cart, (cart) => cart.cartItems, { onDelete: "CASCADE" })
+  @ManyToOne(() => Cart, (cart) => cart.cartItems, { onDelete: "CASCADE" })
   @JoinColumn({ name: "cart_id" })
   cart: Cart;
 
@@ -33,20 +33,6 @@ export class CartItem {
   @JoinColumn({ name: "product_id" })
   product: Product;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

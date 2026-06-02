@@ -5,13 +5,13 @@ import categoryRoutes from "./routes/category.route"
 import { errorHandler } from "./middlewares/error-handler.middleware";
 import productRoutes from './routes/product.route'
 import storeRoutes from './routes/store.route'
+import cartRoutes from './routes/cart.routes';
 
 dotenv.config();
 
 import express = require ("express");
 import swaggerUi from "swagger-ui-express";
 import { specs } from "./config/swagger";
-import { tr } from "zod/locales";
 import path = require("node:path");
 
 
@@ -47,6 +47,7 @@ app.use('/auth', authRoutes);
 app.use("/categories" , categoryRoutes);
 app.use("/products" , productRoutes);
 app.use("/stores" , storeRoutes);
+app.use("/cart", cartRoutes);
 
 
 

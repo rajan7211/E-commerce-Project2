@@ -1,7 +1,12 @@
 import {
-  Entity, PrimaryGeneratedColumn, OneToOne,
-  OneToMany, JoinColumn, CreateDateColumn, UpdateDateColumn,
-  Column
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToOne,
+  OneToMany,
+  JoinColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
 } from "typeorm";
 
 import { User } from "./User";
@@ -12,13 +17,11 @@ export class Cart {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column({ type: "decimal", precision: 10, scale: 2, default: 0 })
+  total_price: number;
 
-  @Column({ type : "decimal" , precision : 10, scale : 2, default : 0})
-  total_price : number;
-
-  @Column({type : "int" ,  default : 0})
-  total_items : number;
-
+  @Column({ type: "int", default: 0 })
+  total_items: number;
 
   @CreateDateColumn()
   created_at: Date;
@@ -30,36 +33,12 @@ export class Cart {
   @JoinColumn({ name: "user_id" })
   user: User;
 
-   @OneToMany(() => CartItem, (cartItem) => cartItem.cart, {
+  @OneToMany(() => CartItem, (cartItem) => cartItem.cart, {
     cascade: true,
     onDelete: "CASCADE",
   })
   cartItems: CartItem[];
 }
-
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
