@@ -130,6 +130,25 @@ export const validationMessages = {
     },
   },
 
+  CART: {
+    QUANTITY: {
+      EMPTY: "Quantity is required.",
+      INVALID: "Quantity must be a valid number.",
+      INTEGER: "Quantity must be an integer.",
+      MIN: "Quantity must be at least 1.",
+      REQUIRED: "Quantity is required.",
+    },
+    PRODUCT_ID: {
+      EMPTY: "Product ID is required.",
+      INVALID: "Product ID must be a valid number.",
+      INTEGER: "Product ID must be an integer.",
+      POSITIVE: "Product ID must be greater than 0.",
+      REQUIRED: "Product ID is required.",
+    },
+  },
+
+
+
 };
 
 
