@@ -3,13 +3,13 @@ import {
   getCartByUserId,
   addCartItem,
   findCartItem,
-  updateCartItem,
+  updateCartItem as repoUpdateCartItem,
   removeCartItem,
-  clearCart,
+  clearCart as repoClearCart,
   updateCartTotals,
   findCartItemById,
 } from "../repositories/cart.repository";
-import { findProductById } from "../repositories/product.repository";
+import { productFindById as findProductById } from "../repositories/product.repository";
 import { ResponseMessage } from "../enums/response-message.enum";
 import { HttpStatus } from "../enums/http-status.enum";
 import {
@@ -53,7 +53,7 @@ const formatCart = (cart: any): CartResponse => {
   };
 };
 
-// ==================== GET CART ====================
+// get cart
 export const getCart = async (
   userId: number
 ): Promise<ServiceResponse<CartListResponse>> => {
@@ -87,7 +87,7 @@ export const getCart = async (
   }
 };
 
-// ==================== ADD TO CART ====================
+// Add to Cart
 export const addToCart = async (
   userId: number,
   data: AddToCartRequestBody
@@ -132,7 +132,7 @@ export const addToCart = async (
   }
 };
 
-// ==================== UPDATE CART ITEM ====================
+// Update cart Item 
 export const updateCartItem = async (
   userId: number,
   cartItemId: number,
@@ -158,7 +158,7 @@ export const updateCartItem = async (
     }
 
     // Update cart item
-    await updateCartItem(cartItemId, data.quantity);
+    await repoUpdateCartItem(cartItemId, data.quantity);
 
     // Update cart totals
     const updatedCart = await updateCartTotals(cart.id);
@@ -175,7 +175,7 @@ export const updateCartItem = async (
   }
 };
 
-// ==================== REMOVE FROM CART ====================
+// Remove from cart  
 export const removeFromCart = async (
   userId: number,
   cartItemId: number
@@ -212,7 +212,7 @@ export const removeFromCart = async (
   }
 };
 
-// ==================== CLEAR CART ====================
+// Clear cart  
 export const clearCart = async (
   userId: number
 ): Promise<ServiceResponse<CartResponse>> => {
@@ -224,7 +224,7 @@ export const clearCart = async (
     }
 
     // Clear cart items
-    await clearCart(cart.id);
+    await repoClearCart(cart.id);
 
     // Get updated cart
     const updatedCart = await getCartByUserId(userId);
@@ -240,6 +240,11 @@ export const clearCart = async (
     throw error;
   }
 };
+
+
+
+
+
 
 
 

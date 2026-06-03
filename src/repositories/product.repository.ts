@@ -89,7 +89,7 @@ Promise<{ products: Product[]; total: number }> => {
   }
 };
 
-export const findById = async (id: number): Promise<Product | null> => {
+export const productFindById = async (id: number): Promise<Product | null> => {
   try {
     const repository = getRepository();
     return await repository.findOne({
@@ -101,6 +101,8 @@ export const findById = async (id: number): Promise<Product | null> => {
     throw error;
   }
 };
+
+export const findById = productFindById;
 
 export const findByStoreId = async (storeId: number): Promise<Product[]> => {
   try {
@@ -124,7 +126,7 @@ export const update = async (
     const repository = getRepository();
 
     await repository.update(id, data);
-    const product = await findById(id);
+    const product = await productFindById(id);
 
     if (!product) {
       throw new Error("Product not found");
@@ -169,7 +171,7 @@ export const updateStock = async (
   try {
     const repository = getRepository();
 
-    const product = await findById(productId);
+    const product = await productFindById(productId);
 
     if (!product) {
       throw new Error("Product not found");
@@ -183,7 +185,7 @@ export const updateStock = async (
 
     await repository.update(productId, { stock: newStock });
 
-    const updatedProduct = await findById(productId);
+    const updatedProduct = await productFindById(productId);
 
     if (!updatedProduct) {
       throw new Error("Product not found after update");

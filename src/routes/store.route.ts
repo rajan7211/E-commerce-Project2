@@ -118,6 +118,25 @@ router.post(
 
 /**
  * @swagger
+ * /stores/my-stores:
+ *   get:
+ *     summary: Get my stores
+ *     tags: [Stores]
+ *     description: Get all stores owned by authenticated user
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of user's stores
+ *       401:
+ *         description: Unauthorized
+ *       500:
+ *         description: Internal server error
+ */
+router.get("/my-stores", authenticate, findByUser);
+
+/**
+ * @swagger
  * /stores/{id}:
  *   get:
  *     summary: Get store by ID
@@ -246,8 +265,7 @@ router.delete("/:id", authenticate, deleteById);
  *       500:
  *         description: Internal server error
  */
-router.get("/my-stores", 
-    authenticate, findByUser);
+// duplicate route removed (handled above)
 
 export default router;
 

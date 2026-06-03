@@ -11,7 +11,8 @@ import {
   UpdateCartItemRequestBody,
 } from "../Interfaces/cart.interface";
 
-// ==================== GET CART ====================
+
+// get cart
 export const getCart = async (req: Request, res: Response) => {
   try {
     const userId = req.user?.userId;
@@ -40,7 +41,7 @@ export const getCart = async (req: Request, res: Response) => {
   }
 };
 
-// ==================== ADD TO CART ====================
+// add to cart
 export const addToCart = async (req: Request, res: Response) => {
   try {
     const userId = req.user?.userId;
@@ -70,7 +71,7 @@ export const addToCart = async (req: Request, res: Response) => {
   }
 };
 
-// ==================== UPDATE CART ITEM ====================
+// update cart itms 
 export const updateCartItem = async (req: Request, res: Response) => {
   try {
     const userId = req.user?.userId;
@@ -109,7 +110,7 @@ export const updateCartItem = async (req: Request, res: Response) => {
   }
 };
 
-// ==================== REMOVE FROM CART ====================
+// remove from cart  
 export const removeFromCart = async (req: Request, res: Response) => {
   try {
     const userId = req.user?.userId;
@@ -147,7 +148,7 @@ export const removeFromCart = async (req: Request, res: Response) => {
   }
 };
 
-// ==================== CLEAR CART ====================
+// clear cart
 export const clearCart = async (req: Request, res: Response) => {
   try {
     const userId = req.user?.userId;
@@ -175,6 +176,20 @@ export const clearCart = async (req: Request, res: Response) => {
     });
   }
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

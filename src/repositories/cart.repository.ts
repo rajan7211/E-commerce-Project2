@@ -2,7 +2,6 @@ import { Repository } from "typeorm";
 import { AppDataSource } from "../config/data-source";
 import { Cart } from "../entities/Cart";
 import { CartItem } from "../entities/CartItem";
-import { Product } from "../entities/Product";
 
 const getCartRepository = (): Repository<Cart> => {
   return AppDataSource.getRepository(Cart);
@@ -12,7 +11,7 @@ const getCartItemRepository = (): Repository<CartItem> => {
   return AppDataSource.getRepository(CartItem);
 };
 
-// ==================== GET OR CREATE CART ====================
+//  get and create cart
 export const getOrCreateCart = async (userId: number): Promise<Cart> => {
   try {
     const repository = getCartRepository();
@@ -38,7 +37,7 @@ export const getOrCreateCart = async (userId: number): Promise<Cart> => {
   }
 };
 
-// ==================== GET CART BY USER ID ====================
+// get cart By user Id
 export const getCartByUserId = async (userId: number): Promise<Cart | null> => {
   try {
     const repository = getCartRepository();
@@ -52,7 +51,7 @@ export const getCartByUserId = async (userId: number): Promise<Cart | null> => {
   }
 };
 
-// ==================== ADD ITEM TO CART ====================
+// Add Items to cart 
 export const addCartItem = async (
   cartId: number,
   productId: number,
@@ -63,7 +62,7 @@ export const addCartItem = async (
 
     const cartItem = repository.create({
       cart: { id: cartId },
-      product: { id: productId },
+      product: { product_id: productId },
       quantity,
     });
 
@@ -74,7 +73,7 @@ export const addCartItem = async (
   }
 };
 
-// ==================== FIND CART ITEM ====================
+// Find cart Itme 
 export const findCartItem = async (
   cartId: number,
   productId: number
@@ -82,7 +81,7 @@ export const findCartItem = async (
   try {
     const repository = getCartItemRepository();
     return await repository.findOne({
-      where: { cart: { id: cartId }, product: { id: productId } },
+      where: { cart: { id: cartId }, product: { product_id: productId } },
       relations: ["product"],
     });
   } catch (error: any) {
@@ -91,7 +90,7 @@ export const findCartItem = async (
   }
 };
 
-// ==================== UPDATE CART ITEM ====================
+// Update cart Item 
 export const updateCartItem = async (
   cartItemId: number,
   quantity: number
@@ -116,7 +115,7 @@ export const updateCartItem = async (
   }
 };
 
-// ==================== REMOVE CART ITEM ====================
+// Remove cart itme 
 export const removeCartItem = async (cartItemId: number): Promise<void> => {
   try {
     const repository = getCartItemRepository();
@@ -127,7 +126,7 @@ export const removeCartItem = async (cartItemId: number): Promise<void> => {
   }
 };
 
-// ==================== CLEAR CART ====================
+// Clear cart 
 export const clearCart = async (cartId: number): Promise<void> => {
   try {
     const repository = getCartItemRepository();
@@ -144,7 +143,7 @@ export const clearCart = async (cartId: number): Promise<void> => {
   }
 };
 
-// ==================== UPDATE CART TOTALS ====================
+// Update cart Totals
 export const updateCartTotals = async (cartId: number): Promise<Cart> => {
   try {
     const cartRepository = getCartRepository();
@@ -183,7 +182,7 @@ export const updateCartTotals = async (cartId: number): Promise<Cart> => {
   }
 };
 
-// FIND CART ITEM BY ID 
+// find cart Item by ID 
 export const findCartItemById = async (id: number): Promise<CartItem | null> => {
   try {
     const repository = getCartItemRepository();
@@ -196,6 +195,10 @@ export const findCartItemById = async (id: number): Promise<CartItem | null> => 
     throw error;
   }
 };
+
+
+
+
 
 
 

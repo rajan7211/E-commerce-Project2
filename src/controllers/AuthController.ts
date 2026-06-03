@@ -15,7 +15,6 @@ import { HttpStatus } from "../enums/http-status.enum";
 import { createError } from "../middlewares/error-handler.middleware";
 
 // register user
-
 export const register = async (req: Request, res: Response) => {
   try {
     const data: RegisterRequestBody = req.body;
