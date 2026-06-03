@@ -1,3 +1,4 @@
+import logger from "../config/logger.config";
 import {
   getOrCreateCart,
   getCartByUserId,
@@ -22,7 +23,7 @@ import {
 import { ServiceResponse } from "../Interfaces/service-response.interface";
 import { createError } from "../middlewares/error-handler.middleware";
 
-// Helper to format cart item response
+//  format cart item response
 const formatCartItem = (item: any): CartItemResponse => {
   return {
     id: item.id,
@@ -41,7 +42,7 @@ const formatCartItem = (item: any): CartItemResponse => {
   };
 };
 
-// Helper to format cart response
+// format cart response
 const formatCart = (cart: any): CartResponse => {
   return {
     id: cart.id,
@@ -82,7 +83,7 @@ export const getCart = async (
       statusCode: HttpStatus.OK,
     };
   } catch (error: any) {
-    console.error("Cart service getCart error:", error);
+    logger.error("Cart service getCart error:", error);
     throw error;
   }
 };
@@ -127,7 +128,7 @@ export const addToCart = async (
       statusCode: HttpStatus.OK,
     };
   } catch (error: any) {
-    console.error("Cart service addToCart error:", error);
+    logger.error("Cart service addToCart error:", error);
     throw error;
   }
 };
@@ -170,7 +171,7 @@ export const updateCartItem = async (
       statusCode: HttpStatus.OK,
     };
   } catch (error: any) {
-    console.error("Cart service updateCartItem error:", error);
+    logger.error("Cart service updateCartItem error:", error);
     throw error;
   }
 };
@@ -207,7 +208,7 @@ export const removeFromCart = async (
       statusCode: HttpStatus.OK,
     };
   } catch (error: any) {
-    console.error("Cart service removeFromCart error:", error);
+    logger.error("Cart service removeFromCart error:", error);
     throw error;
   }
 };
@@ -236,11 +237,10 @@ export const clearCart = async (
       statusCode: HttpStatus.OK,
     };
   } catch (error: any) {
-    console.error("Cart service clearCart error:", error);
+    logger.error("Cart service clearCart error:", error);
     throw error;
   }
 };
-
 
 
 

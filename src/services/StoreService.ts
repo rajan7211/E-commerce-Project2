@@ -1,3 +1,4 @@
+import logger from "../config/logger.config";
 import {
   createStore,
   findStoreById,
@@ -65,7 +66,7 @@ export const create = async (
       statusCode: HttpStatus.CREATED,
     };
   } catch (error: any) {
-    console.error("Store service create error:", error);
+    logger.error("Store service create error:", error);
     throw error;
   }
 };
@@ -97,7 +98,7 @@ export const findAll = async (): Promise<ServiceResponse<StoreListResponse>> => 
       statusCode: HttpStatus.OK,
     };
   } catch (error: any) {
-    console.error("Store service findAll error:", error);
+    logger.error("Store service findAll error:", error);
     throw error;
   }
 };
@@ -132,7 +133,7 @@ export const findById = async (
       statusCode: HttpStatus.OK,
     };
   } catch (error: any) {
-    console.error("Store service findById error:", error);
+    logger.error("Store service findById error:", error);
     throw error;
   }
 };
@@ -166,7 +167,7 @@ export const findByUser = async (
       statusCode: HttpStatus.OK,
     };
   } catch (error: any) {
-    console.error("Store service findByUser error:", error);
+    logger.error("Store service findByUser error:", error);
     throw error;
   }
 };
@@ -235,7 +236,7 @@ export const update = async (
       statusCode: HttpStatus.OK,
     };
   } catch (error: any) {
-    console.error("Store service update error:", error);
+    logger.error("Store service update error:", error);
     throw error;
   }
 };
@@ -266,7 +267,7 @@ export const deleteById = async (
       statusCode: HttpStatus.OK,
     };
   } catch (error: any) {
-    console.error("Store service deleteById error:", error);
+    logger.error("Store service deleteById error:", error);
     if (error.message === "Cannot delete store with associated products") {
       throw createError(
         ResponseMessage.CANNOT_DELETE_STORE_WITH_PRODUCTS,
@@ -276,7 +277,6 @@ export const deleteById = async (
     throw error;
   }
 };
-
 
 
 

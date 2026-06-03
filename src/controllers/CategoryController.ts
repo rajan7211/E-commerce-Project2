@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import logger from "../config/logger.config";
 import {
   create as createCategoryService,
   findAll as findAllCategoriesService,
@@ -24,7 +25,7 @@ export const create = async (req: Request , res : Response) => {
             data: result.data,
         });
     } catch (error : any) {
-        console.error("Category create error:" , error);
+        logger.error("Category create error:" , error);
         const statusCode = error.statusCode || 400;
 
       res.status(statusCode).json({
@@ -47,7 +48,7 @@ export const findAll = async (req : Request , res: Response) => {
             data : result.data,
         });
     } catch(error : any) {
-        console.error("category controller findAll error :" , error);
+        logger.error("category controller findAll error :" , error);
         const statusCode = error.statusCode || 400;
 
         res.status(statusCode).json ({
@@ -76,7 +77,7 @@ export const findById = async (req: Request , res: Response) => {
             data : result.data,
         });
     } catch (error :any) {
-        console.error("category controler findbyId error:" , error);
+        logger.error("category controler findbyId error:" , error);
         const statusCode =error.statusCode || 400;
 
 
@@ -109,7 +110,7 @@ export const update = async (req: Request, res: Response) => {
       data: result.data,
     });
   } catch (error: any) {
-    console.error("Category controller update error:", error);
+    logger.error("Category controller update error:", error);
     const statusCode = error.statusCode || 400;
 
     res.status(statusCode).json({
@@ -138,7 +139,7 @@ export const deleteById = async (req: Request, res: Response) => {
       data: result.data,
     });
   } catch (error: any) {
-    console.error("Category controller deleteById error:", error);
+    logger.error("Category controller deleteById error:", error);
     const statusCode = error.statusCode || 400;
 
     res.status(statusCode).json({
@@ -147,7 +148,6 @@ export const deleteById = async (req: Request, res: Response) => {
     });
   }
 };
-
 
 
 

@@ -1,3 +1,4 @@
+import logger from "../config/logger.config";
 import {
   create as createCategoryRepo,
   findAll as findAllCategoriesRepo,
@@ -43,7 +44,7 @@ export const create = async (
       statusCode: HttpStatus.CREATED,
     };
   } catch (error: any) {
-    console.error("Category service create error:", error);
+    logger.error("Category service create error:", error);
     throw error;
   }
 };
@@ -65,7 +66,7 @@ export const findAll = async (): Promise<ServiceResponse<CategoryListResponse>> 
       statusCode: HttpStatus.OK,
     };
   } catch (error: any) {
-    console.error("Category service findAll error:", error);
+    logger.error("Category service findAll error:", error);
     throw error;
   }
 };
@@ -92,7 +93,7 @@ export const findById = async (
       statusCode: HttpStatus.OK,
     };
   } catch (error: any) {
-    console.error("Category service findById error:", error);
+    logger.error("Category service findById error:", error);
     throw error;
   }
 };
@@ -132,7 +133,7 @@ export const update = async (
       statusCode: HttpStatus.OK,
     };
   } catch (error: any) {
-    console.error("Category service update error:", error);
+    logger.error("Category service update error:", error);
     throw error;
   }
 };
@@ -156,7 +157,7 @@ export const deleteById = async (
       statusCode: HttpStatus.OK,
     };
   } catch (error: any) {
-    console.error("Category service deleteById error:", error);
+    logger.error("Category service deleteById error:", error);
     if (error.message === "Cannot delete category with associated products") {
       throw createError(
         ResponseMessage.CANNOT_DELETE_CATEGORY_WITH_PRODUCTS,
@@ -166,7 +167,6 @@ export const deleteById = async (
     throw error;
   }
 };
-
 
 
 

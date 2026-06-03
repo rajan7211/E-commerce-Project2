@@ -1,3 +1,4 @@
+import logger from "../config/logger.config";
 import {
   create as createProductRepo,
   findAll as findAllProductsRepo,
@@ -79,6 +80,8 @@ export const create = async (
       store,
     });
 
+    logger.info(`Product created: ${product.product_name} by user ${userId}`);
+
     return {
       success: true,
       message: ResponseMessage.PRODUCT_CREATED_SUCCESS,
@@ -102,7 +105,7 @@ export const create = async (
       statusCode: HttpStatus.CREATED,
     };
   } catch (error: any) {
-    console.error("Product service create error:", error);
+    logger.error("Product service create error:", error);
     throw error;
   }
 };
@@ -113,6 +116,7 @@ export const findAll = async (
 ): Promise<ServiceResponse<ProductListResponse>> => {
   try {
     const { products, total } = await findAllProductsRepo(params);
+    logger.debug(`ProductService findAll returned ${total} products`);
 
     return {
       success: true,
@@ -141,7 +145,7 @@ export const findAll = async (
       statusCode: HttpStatus.OK,
     };
   } catch (error: any) {
-    console.error("Product service findAll error:", error);
+    logger.error("Product service findAll error:", error);
     throw error;
   }
 };
@@ -156,6 +160,8 @@ export const findById = async (
     if (!product) {
       throw createError(ResponseMessage.PRODUCT_NOT_FOUND, HttpStatus.NOT_FOUND);
     }
+
+    logger.debug(`ProductService findById succeeded for ${id}`);
 
     return {
       success: true,
@@ -181,7 +187,7 @@ export const findById = async (
       statusCode: HttpStatus.OK,
     };
   } catch (error: any) {
-    console.error("Product service findById error:", error);
+    logger.error("Product service findById error:", error);
     throw error;
   }
 };
@@ -207,6 +213,7 @@ export const findByStore = async (
     }
 
     const products = await findProductsByStoreIdRepo(storeId);
+    logger.info(`ProductService findByStore succeeded for store ${storeId} by user ${userId}`);
 
     return {
       success: true,
@@ -233,7 +240,7 @@ export const findByStore = async (
       statusCode: HttpStatus.OK,
     };
   } catch (error: any) {
-    console.error("Product service findByStore error:", error);
+    logger.error("Product service findByStore error:", error);
     throw error;
   }
 };
@@ -307,6 +314,7 @@ export const update = async (
 
     // Update product
     const updatedProduct = await updateProductRepo(id, updateData);
+    logger.info(`ProductService update succeeded for product ${id} by user ${userId}`);
 
     return {
       success: true,
@@ -331,7 +339,7 @@ export const update = async (
       statusCode: HttpStatus.OK,
     };
   } catch (error: any) {
-    console.error("Product service update error:", error);
+    logger.error("Product service update error:", error);
     throw error;
   }
 };
@@ -360,6 +368,7 @@ export const deleteById = async (
     }
 
     await deleteProductRepo(id);
+    logger.info(`ProductService deleteById succeeded for product ${id} by user ${userId}`);
 
     return {
       success: true,
@@ -368,7 +377,7 @@ export const deleteById = async (
       statusCode: HttpStatus.OK,
     };
   } catch (error: any) {
-    console.error("Product service deleteById error:", error);
+    logger.error("Product service deleteById error:", error);
     throw error;
   }
 };
@@ -398,6 +407,7 @@ export const updateStock = async (
     }
 
     const updatedProduct = await updateStockRepo(productId, quantity);
+    logger.info(`ProductService updateStock succeeded for product ${productId} by user ${userId} quantity ${quantity}`);
 
     return {
       success: true,
@@ -422,13 +432,18 @@ export const updateStock = async (
       statusCode: HttpStatus.OK,
     };
   } catch (error: any) {
-    console.error("Product service updateStock error:", error);
+    logger.error("Product service updateStock error:", error);
     if (error.message === "Insufficient stock") {
       throw createError(ResponseMessage.PRODUCT_OUT_OF_STOCK, HttpStatus.BAD_REQUEST);
     }
     throw error;
   }
 };
+
+
+
+
+
 
 
 

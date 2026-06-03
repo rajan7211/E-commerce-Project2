@@ -36,6 +36,7 @@ export enum ResponseMessage {
   CATEGORY_ALREADY_EXISTS = "Category already exists.",
   CANNOT_DELETE_CATEGORY_WITH_PRODUCTS = "Cannot delete category with associated products.",
 
+  //  products msgs 
   PRODUCT_CREATED_SUCCESS = "Product created successfully.",
   PRODUCT_UPDATED_SUCCESS = "Product updated successfully.",
   PRODUCT_DELETED_SUCCESS = "Product deleted successfully.",
@@ -54,7 +55,7 @@ export enum ResponseMessage {
   CANNOT_DELETE_STORE_WITH_PRODUCTS = "Cannot delete store with associated products.",
   UNAUTHORIZED_STORE_ACCESS = "You can only manage your own stores.",
 
- // CART MESSAGES (NEW)
+ // Cart msgs
   CART_CREATED_SUCCESS = "Cart created successfully.",
   CART_UPDATED_SUCCESS = "Cart updated successfully.",
   CART_ITEM_ADDED_SUCCESS = "Item added to cart successfully.",
@@ -67,7 +68,12 @@ export enum ResponseMessage {
   QUANTITY_EXCEEDS_STOCK = "Quantity exceeds available stock.",
   PRODUCT_ALREADY_IN_CART = "Product already exists in cart.",
 
-
+  // order msgs 
+  ORDER_CREATED_SUCCESS = "Order placed successfully.",
+  ORDER_NOT_FOUND = "Order not found.",
+  ORDERS_RETRIEVED_SUCCESS = "Orders retrieved successfully.",
+  UNAUTHORIZED_ORDER_ACCESS = "You can only access your own orders.",
+  CART_EMPTY_CANNOT_ORDER = "Cart is empty. Add items before placing an order.",
 
   VALIDATION_ERROR = "Validation error.",
   PASSWORDS_DO_NOT_MATCH = "Passwords do not match.",

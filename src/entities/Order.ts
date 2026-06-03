@@ -1,4 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from "typeorm";
+import { Entity, 
+  PrimaryGeneratedColumn, 
+  Column, ManyToOne, OneToMany, 
+  UpdateDateColumn, CreateDateColumn } from "typeorm";
 import { User } from "./User";
 import { OrderItem } from "./OrderItem";
 import { Payment } from "./Payment";
@@ -12,6 +15,15 @@ export class Order {
 
   @Column("decimal")
   total_price: number;
+
+  @Column({
+    type: "enum",
+    enum: ["pending", "processing", "shipped", "delivered", "cancelled"],
+    default: "pending"
+  })
+  status: string;
+
+
 
   @ManyToOne(() => User, (user) => user.orders)
   user: User;
@@ -27,7 +39,15 @@ export class Order {
 
   @OneToMany(() => Shipping, (shipping) => shipping.order)
   shipping: Shipping[];
+
+   @CreateDateColumn()
+  created_at: Date;
+
+  @UpdateDateColumn()
+  updated_at: Date;
+  
 }
+
 
 
 

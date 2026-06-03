@@ -1,4 +1,5 @@
 import { transporter } from "../config/smtp";
+import logger from "../config/logger.config";
 
 // GET OTP TEMPLATE
 const getOtpTemplate = (otp: string, firstName: string): string => {
@@ -108,7 +109,7 @@ export const sendWelcomeEmail = async (
   try {
     await transporter.sendMail(mailOptions);
   } catch (error) {
-    console.error("Error sending welcome email:", error);
+    logger.error("Error sending welcome email:", error);
   }
 };
 
@@ -128,7 +129,7 @@ export const sendForgotPasswordOtpEmail = async (
   try {
     await transporter.sendMail(mailOptions);
   } catch (error) {
-    console.error("Error sending forgot password OTP email:", error);
+    logger.error("Error sending forgot password OTP email:", error);
     throw error;
   }
 };
@@ -148,10 +149,9 @@ export const sendPasswordResetSuccessEmail = async (
   try {
     await transporter.sendMail(mailOptions);
   } catch (error) {
-    console.error("Error sending password reset success email:", error);
+    logger.error("Error sending password reset success email:", error);
   }
 };
-
 
 
 

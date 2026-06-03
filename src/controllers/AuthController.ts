@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import logger from "../config/logger.config";
 import { register as registerService, login as loginService } from "../services/AuthService";
 import { verifyOtp as verifyOtpService, resendOtp as resendOtpService } from "../services/OtpService";
 import {
@@ -150,7 +151,6 @@ export const logout = async (req: Request, res: Response) => {
     });
   }
 };
-
 
 
 

@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { asyncHandler } from "../middlewares/error-handler.middleware";
+import logger from "../config/logger.config";
 import {
   forgotPassword as forgotPasswordService,
   verifyForgotPasswordOtp as verifyForgotPasswordOtpService,
@@ -46,7 +47,6 @@ export const resetPassword = asyncHandler(
     });
   }
 );
-
 
 
 

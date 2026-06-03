@@ -147,7 +147,16 @@ export const validationMessages = {
     },
   },
 
-
+  ORDER: {
+    ADDRESS: {
+      REQUIRED: "Shipping address is required.",
+      MIN: "Shipping address must be at least 5 characters.",
+    },
+    PAYMENT_METHOD: {
+      REQUIRED: "Payment method is required.",
+      INVALID: "Invalid payment method.",
+    },
+  },
 
 };
 

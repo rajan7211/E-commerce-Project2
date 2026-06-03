@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import logger from "../config/logger.config";
 
-// Logger middleware for HTTP requests
+//  HTTP requests
 export const loggerMiddleware = (
   req: Request,
   res: Response,
@@ -9,7 +9,6 @@ export const loggerMiddleware = (
 ) => {
   const start = Date.now();
 
-  // Log when response finishes
  res.on("finish", () => {
   const duration = Date.now() - start;
 
@@ -30,7 +29,6 @@ export const loggerMiddleware = (
   next();
 };
 
-// Error logger middleware
 export const errorLogger = (
   err: any,
   req: Request,
@@ -49,6 +47,8 @@ export const errorLogger = (
 
   next(err);
 };
+
+
 
 
 

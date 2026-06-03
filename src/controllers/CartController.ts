@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import logger from "../config/logger.config";
 import {
   getCart as getCartService,
   addToCart as addToCartService,
@@ -31,7 +32,7 @@ export const getCart = async (req: Request, res: Response) => {
       data: result.data,
     });
   } catch (error: any) {
-    console.error("Cart controller getCart error:", error);
+    logger.error("Cart controller getCart error:", error);
     const statusCode = error.statusCode || 400;
 
     res.status(statusCode).json({
@@ -61,7 +62,7 @@ export const addToCart = async (req: Request, res: Response) => {
       data: result.data,
     });
   } catch (error: any) {
-    console.error("Cart controller addToCart error:", error);
+    logger.error("Cart controller addToCart error:", error);
     const statusCode = error.statusCode || 400;
 
     res.status(statusCode).json({
@@ -100,7 +101,7 @@ export const updateCartItem = async (req: Request, res: Response) => {
       data: result.data,
     });
   } catch (error: any) {
-    console.error("Cart controller updateCartItem error:", error);
+    logger.error("Cart controller updateCartItem error:", error);
     const statusCode = error.statusCode || 400;
 
     res.status(statusCode).json({
@@ -138,7 +139,7 @@ export const removeFromCart = async (req: Request, res: Response) => {
       data: result.data,
     });
   } catch (error: any) {
-    console.error("Cart controller removeFromCart error:", error);
+    logger.error("Cart controller removeFromCart error:", error);
     const statusCode = error.statusCode || 400;
 
     res.status(statusCode).json({
@@ -167,7 +168,7 @@ export const clearCart = async (req: Request, res: Response) => {
       data: result.data,
     });
   } catch (error: any) {
-    console.error("Cart controller clearCart error:", error);
+    logger.error("Cart controller clearCart error:", error);
     const statusCode = error.statusCode || 400;
 
     res.status(statusCode).json({
@@ -176,7 +177,6 @@ export const clearCart = async (req: Request, res: Response) => {
     });
   }
 };
-
 
 
 

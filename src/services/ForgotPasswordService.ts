@@ -1,3 +1,4 @@
+import logger from "../config/logger.config";
 import {
   findByEmail as findUserByEmail,
   findById as findUserById,
@@ -56,7 +57,7 @@ export const forgotPassword = async (
       statusCode: HttpStatus.OK,
     };
   } catch (error) {
-    console.error("Forgot password error:", error);
+    logger.error("Forgot password error:", error);
     throw createError(
       ResponseMessage.INTERNAL_ERROR,
       HttpStatus.INTERNAL_SERVER_ERROR
@@ -149,7 +150,7 @@ export const resetPassword = async (
     await sendPasswordResetSuccessEmail(
       user.user_email,
       user.first_name
-    ).catch((err) => console.log("Password reset success email error:", err));
+    ).catch((err) => logger.error("Password reset success email error:", err));
 
     return {
       success: true,
@@ -161,14 +162,13 @@ export const resetPassword = async (
       statusCode: HttpStatus.OK,
     };
   } catch (error) {
-    console.error("Reset password error:", error);
+    logger.error("Reset password error:", error);
     throw createError(
       ResponseMessage.INTERNAL_ERROR,
       HttpStatus.INTERNAL_SERVER_ERROR
     );
   }
 };
-
 
 
 

@@ -1,3 +1,4 @@
+import logger from "../config/logger.config";
 import {
   create as createUser,
   findByEmail as findUserByEmail,
@@ -27,89 +28,98 @@ import { ChangePasswordRequestBody, LogoutResponse } from "../Interfaces/auth.in
 export const register = async (
   data: RegisterRequestBody
 ): Promise<ServiceResponse<RegisterResponse>> => {
-  const normalizedEmail = data.email.toLowerCase().trim();
+  try {
+    const normalizedEmail = data.email.toLowerCase().trim();
 
-  const emailExists = await checkEmailExists(normalizedEmail);
-  if (emailExists) {
-    throw createError(ResponseMessage.EMAIL_ALREADY_EXISTS, HttpStatus.CONFLICT);
+    const emailExists = await checkEmailExists(normalizedEmail);
+    if (emailExists) {
+      throw createError(ResponseMessage.EMAIL_ALREADY_EXISTS, HttpStatus.CONFLICT);
+    }
+
+    const user = await createUser({
+      first_name: data.first_name,
+      last_name: data.last_name,
+      user_email: normalizedEmail,
+      user_pass: data.password,
+      role: data.role || UserRole.CUSTOMER,
+    });
+
+    // generate and send otp
+    await generateAndSendOtp(user);
+
+    logger.info(`AuthService register succeeded for ${normalizedEmail}`);
+
+    return {
+      success: true,
+      message: ResponseMessage.REGISTRATION_SUCCESS,
+      data: {
+        email: user.user_email,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        is_verified: user.is_verified,
+      },
+      statusCode: HttpStatus.CREATED,
+    };
+  } catch (error: any) {
+    logger.error("AuthService register error:", error);
+    throw error;
   }
-  
-
-  const user = await createUser({
-    first_name: data.first_name,
-    last_name: data.last_name,
-    user_email: normalizedEmail,
-    user_pass: data.password,
-    role: data.role || UserRole.CUSTOMER,
-  });
-
-  // generate and send otp  
-
- await generateAndSendOtp(user) ; 
-
- return {
-  success : true,
-  message : ResponseMessage.REGISTRATION_SUCCESS,
-  data : {
-    email : user.user_email,
-    first_name : user.first_name,
-    last_name : user.last_name, 
-    is_verified : user.is_verified,
-  },
-  statusCode : HttpStatus.CREATED,
- };
-
 };
 
 
 // login user 
 
 export const login = async (
-  data : LoginRequestBody
-) : Promise<ServiceResponse<LoginResponse>> => {
-  const normailizedEmail = data.email.toLowerCase().trim();
+  data: LoginRequestBody
+): Promise<ServiceResponse<LoginResponse>> => {
+  try {
+    const normalizedEmail = data.email.toLowerCase().trim();
 
-  // find User 
-  const user = await findUserByEmail(normailizedEmail);
-  if (!user) {
-    throw createError (ResponseMessage.INVALID_CREDENTIALS , HttpStatus.UNAUTHORIZED);
-  };
+    // find User
+    const user = await findUserByEmail(normalizedEmail);
+    if (!user) {
+      throw createError(ResponseMessage.INVALID_CREDENTIALS, HttpStatus.UNAUTHORIZED);
+    }
 
+    const isPasswordvalid = await user.validatePassword(data.password);
+    if (!isPasswordvalid) {
+      throw createError(ResponseMessage.INVALID_CREDENTIALS, HttpStatus.UNAUTHORIZED);
+    }
 
-  const isPasswordvalid = await user.validatePassword(data.password);
-  if (!isPasswordvalid) {
-    throw createError (ResponseMessage.INVALID_CREDENTIALS , HttpStatus.UNAUTHORIZED);
-  };
+    if (!user.is_verified) {
+      throw createError(ResponseMessage.EMAIL_NOT_VERIFIED, HttpStatus.FORBIDDEN);
+    }
 
-  if (!user.is_verified) {
-    throw createError (ResponseMessage.EMAIL_NOT_VERIFIED, HttpStatus.FORBIDDEN)
-  };
+    const tokens = generateTokens({
+      userId: user.id,
+      email: user.user_email,
+      role: user.role,
+      is_verified: user.is_verified,
+    });
 
+   logger.info(`AuthService login succeeded for ${normalizedEmail}`);
 
-   const tokens = generateTokens ({
-    userId : user.id,
-    email : user.user_email,
-    role : user.role,
-    is_verified : user.is_verified,
-   });
-
-return {
-  success : true,
-  message : ResponseMessage.LOGIN_SUCCESS , 
-  data : {
-    user : {
-      id : user.id,
-      first_name : user.first_name,
-      last_name : user.last_name,
-      email : user.user_email,
-      role : user.role,
-      is_verified : user.is_verified,
-      created_at  : user.created_at,
-    },
-    tokens,
-  },
-  statusCode : HttpStatus.OK
-}
+    return {
+      success: true, 
+      message: ResponseMessage.LOGIN_SUCCESS,
+      data: {
+        user: {
+          id: user.id,
+          first_name: user.first_name,
+          last_name: user.last_name,
+          email: user.user_email,
+          role: user.role,
+          is_verified: user.is_verified,
+          created_at: user.created_at,
+        },
+        tokens,
+      },
+      statusCode: HttpStatus.OK,
+    };
+  } catch (error: any) {
+    logger.error("AuthService login error:", error);
+    throw error;
+  }
 }
 
 
@@ -119,40 +129,53 @@ export const changePassword = async (
   userId: number,
   data: ChangePasswordRequestBody
 ): Promise<ServiceResponse<any>> => {
-  const user = await findUserById(userId);
+  try {
+    const user = await findUserById(userId);
 
-  if (!user) {
-    throw createError(ResponseMessage.USER_NOT_FOUND, HttpStatus.NOT_FOUND);
+    if (!user) {
+      throw createError(ResponseMessage.USER_NOT_FOUND, HttpStatus.NOT_FOUND);
+    }
+
+    const isPasswordValid = await user.validatePassword(data.current_password);
+    if (!isPasswordValid) {
+      throw createError(ResponseMessage.CURRENT_PASSWORD_INVALID, HttpStatus.BAD_REQUEST);
+    }
+
+    // Update Password
+    await changePasswordRepo(userId, data.new_password);
+
+    logger.info(`AuthService changePassword succeeded for userId ${userId}`);
+
+    return {
+      success: true,
+      message: ResponseMessage.PASSWORD_CHANGED_SUCCESS,
+      data: {},
+      statusCode: HttpStatus.OK,
+    };
+  } catch (error: any) {
+    logger.error("AuthService changePassword error:", error);
+    throw error;
   }
-
-  const isPasswordValid = await user.validatePassword(data.current_password);
-  if (!isPasswordValid) {
-    throw createError(ResponseMessage.CURRENT_PASSWORD_INVALID, HttpStatus.BAD_REQUEST);
-  }
-  
-  // Update Password
-  await changePasswordRepo(userId, data.new_password);
-
-  return {
-    success: true,
-    message: ResponseMessage.PASSWORD_CHANGED_SUCCESS,
-    data: {},
-    statusCode: HttpStatus.OK,
-  };
 };
 
 
-
-// logpout 
+// logout 
 export const logout = async (): Promise<ServiceResponse<LogoutResponse>> => {
-  return {
-    success: true,
-    message: ResponseMessage.LOGOUT_SUCCESS,
-    data: {
+  try {
+    logger.info("AuthService logout succeeded");
+
+    return {
+      success: true,
       message: ResponseMessage.LOGOUT_SUCCESS,
-    },
-    statusCode: HttpStatus.OK,
-  };
+      data: {
+        message: ResponseMessage.LOGOUT_SUCCESS,
+      },
+      statusCode: HttpStatus.OK,
+    };
+  } catch (error: any) {
+    logger.error("AuthService logout error:", error);
+    throw error;
+  }
 };
 
 

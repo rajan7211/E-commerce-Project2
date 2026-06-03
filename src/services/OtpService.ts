@@ -1,4 +1,5 @@
 
+import logger from "../config/logger.config";
 import {
   findByEmail as findUserByEmail,
   verifyUser as verifyUserService,
@@ -85,8 +86,8 @@ export const generateAndSendOtp = async (user : User) : Promise<void> => {
 
   // send welcome msg
   
-  sendWelcomeEmail(user.user_email , user.first_name).catch ((err: any)=>
-  console.log("Welcome email error:" , err)
+  sendWelcomeEmail(user.user_email , user.first_name).catch((err: any) =>
+    logger.error("Welcome email error:", err)
   );
  return {
   success : true, 
@@ -130,7 +131,6 @@ export  const resendOtp = async (email : string) : Promise<ServiceResponse> => {
     };
 
 }
-
 
 
 

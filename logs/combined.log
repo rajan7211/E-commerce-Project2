@@ -3,3 +3,10 @@
 {"level":"info","message":"GET / 304 - 3ms","service":"ecommerce-api","timestamp":"2026-06-03 13:24:42"}
 {"level":"info","message":"GET / 304 - 2ms","service":"ecommerce-api","timestamp":"2026-06-03 13:24:55"}
 {"level":"info","message":"GET / 304 - 1ms","service":"ecommerce-api","timestamp":"2026-06-03 13:24:56"}
+{"level":"info","message":"Database connected successfully!","service":"ecommerce-api","timestamp":"2026-06-03 13:49:30"}
+{"level":"info","message":"Server running on http://localhost:3000","service":"ecommerce-api","timestamp":"2026-06-03 13:49:30"}
+{"level":"info","message":"GET / 304 - 1ms","service":"ecommerce-api","timestamp":"2026-06-03 13:50:56"}
+{"level":"info","message":"AuthService login succeeded for rajankumar11600@gmail.com","service":"ecommerce-api","timestamp":"2026-06-03 13:51:30"}
+{"level":"info","message":"POST /auth/login 200 - 72ms","service":"ecommerce-api","timestamp":"2026-06-03 13:51:30"}
+{"level":"info","message":"Database connected successfully!","service":"ecommerce-api","timestamp":"2026-06-03 14:50:27"}
+{"level":"info","message":"Server running on http://localhost:3000","service":"ecommerce-api","timestamp":"2026-06-03 14:50:27"}

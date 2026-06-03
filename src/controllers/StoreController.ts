@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import logger from "../config/logger.config";
 import {
   create as createStoreService,
   findAll as findAllStoresService,
@@ -32,7 +33,7 @@ export const create = async (req: Request, res: Response) => {
       data: result.data,
     });
   } catch (error: any) {
-    console.error("Store controller create error:", error);
+    logger.error("Store controller create error:", error);
     const statusCode = error.statusCode || 400;
 
     res.status(statusCode).json({
@@ -53,7 +54,7 @@ export const findAll = async (req: Request, res: Response) => {
       data: result.data,
     });
   } catch (error: any) {
-    console.error("Store controller findAll error:", error);
+    logger.error("Store controller findAll error:", error);
     const statusCode = error.statusCode || 400;
 
     res.status(statusCode).json({
@@ -83,7 +84,7 @@ export const findById = async (req: Request, res: Response) => {
       data: result.data,
     });
   } catch (error: any) {
-    console.error("Store controller findById error:", error);
+    logger.error("Store controller findById error:", error);
     const statusCode = error.statusCode || 400;
 
     res.status(statusCode).json({
@@ -112,7 +113,7 @@ export const findByUser = async (req: Request, res: Response) => {
       data: result.data,
     });
   } catch (error: any) {
-    console.error("Store controller findByUser error:", error);
+    logger.error("Store controller findByUser error:", error);
     const statusCode = error.statusCode || 400;
 
     res.status(statusCode).json({
@@ -151,7 +152,7 @@ export const update = async (req: Request, res: Response) => {
       data: result.data,
     });
   } catch (error: any) {
-    console.error("Store controller update error:", error);
+    logger.error("Store controller update error:", error);
     const statusCode = error.statusCode || 400;
 
     res.status(statusCode).json({
@@ -189,7 +190,7 @@ export const deleteById = async (req: Request, res: Response) => {
       data: result.data,
     });
   } catch (error: any) {
-    console.error("Store controller deleteById error:", error);
+    logger.error("Store controller deleteById error:", error);
     const statusCode = error.statusCode || 400;
 
     res.status(statusCode).json({
@@ -198,7 +199,6 @@ export const deleteById = async (req: Request, res: Response) => {
     });
   }
 };
-
 
 
 
