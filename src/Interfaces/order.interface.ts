@@ -44,9 +44,9 @@ export interface OrderResponse {
   total_price: number;
   status: string;
   items: OrderItemResponse[];
-  payment: PaymentResponse;
-  shipping: ShippingResponse;
-  tracking: TrackResponse;
+  payment: PaymentResponse | null
+  shipping: ShippingResponse | null
+  tracking: TrackResponse | null
   created_at: Date;
   updated_at: Date;
 }

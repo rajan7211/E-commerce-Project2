@@ -8,6 +8,8 @@ import storeRoutes from './routes/store.route'
 import cartRoutes from './routes/cart.routes';
 import { loggerMiddleware, errorLogger } from "./middlewares/logger.middleware";
 import logger from "./config/logger.config";
+import orderRoutes from "./routes/order.routes";
+
 
 
 
@@ -48,6 +50,8 @@ app.use("/categories" , categoryRoutes);
 app.use("/products" , productRoutes);
 app.use("/stores" , storeRoutes);
 app.use("/cart", cartRoutes);
+app.use("/orders" , orderRoutes);
+
 
 
 

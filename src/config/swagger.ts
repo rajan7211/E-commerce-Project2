@@ -338,6 +338,101 @@ const options = {
         },
 
 
+// Order Schema 
+
+OrderItem: {
+          type: "object",
+          properties: {
+            id: { type: "integer", example: 1 },
+            quantity: { type: "integer", example: 2 },
+            price: { type: "number", example: 999.99 },
+            product: {
+              type: "object",
+              properties: {
+                product_id: { type: "integer", example: 1 },
+                product_name: { type: "string", example: "Laptop" },
+                images: {
+                  type: "array",
+                  items: { type: "string", format: "uri" },
+                  example: ["http://localhost:3000/public/uploads/products/img.jpg"],
+                },
+              },
+            },
+          },
+        },
+        Payment: {
+          type: "object",
+          properties: {
+            id: { type: "integer", example: 1 },
+            amount: { type: "number", example: 1999.98 },
+            payment_method: { type: "string", example: "cod" },
+            transaction_status: { type: "string", example: "success" },
+            transaction_id: { type: "string", example: "TXN-123456789" },
+          },
+        },
+        Shipping: {
+          type: "object",
+          properties: {
+            id: { type: "integer", example: 1 },
+            address: { type: "string", example: "123 Main St, New York, NY" },
+          },
+        },
+        Track: {
+          type: "object",
+          properties: {
+            id: { type: "integer", example: 1 },
+            status: { type: "string", example: "pending", enum: ["pending", "packed", "shipped", "delivered"] },
+            date_time: { type: "string", format: "date-time" },
+          },
+        },
+        Order: {
+          type: "object",
+          properties: {
+            id: { type: "integer", example: 1 },
+            total_price: { type: "number", example: 1999.98 },
+            status: { 
+              type: "string", 
+              example: "pending", 
+              enum: ["pending", "processing", "shipped", "delivered", "cancelled"] 
+            },
+            items: {
+              type: "array",
+              items: { $ref: "#/components/schemas/OrderItem" },
+            },
+            payment: { $ref: "#/components/schemas/Payment" },
+            shipping: { $ref: "#/components/schemas/Shipping" },
+            tracking: { $ref: "#/components/schemas/Track" },
+            created_at: { type: "string", format: "date-time" },
+            updated_at: { type: "string", format: "date-time" },
+          },
+        },
+        CreateOrderRequest: {
+          type: "object",
+          required: ["shipping_address", "payment_method"],
+          properties: {
+            shipping_address: {
+              type: "string",
+              example: "123 Main St, City, Country",
+              minLength: 5,
+            },
+            payment_method: {
+              type: "string",
+              enum: ["cod", "card", "paypal"],
+              example: "cod",
+            },
+          },
+        },
+        OrderListResponse: {
+          type: "object",
+          properties: {
+            orders: {
+              type: "array",
+              items: { $ref: "#/components/schemas/Order" },
+            },
+            total: { type: "integer", example: 5 },
+          },
+        },
+        
 
         ErrorResponse: {
           type: "object",
