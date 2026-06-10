@@ -266,3 +266,32 @@
 {"level":"error","message":"OrderService cancelOrder error: Order is already cancelled.","service":"ecommerce-api","stack":"Error: Order is already cancelled.\n    at createError (/home/ditsdev158/My Backend Project2/src/middlewares/error-handler.middleware.ts:61:17)\n    at cancelOrder (/home/ditsdev158/My Backend Project2/src/services/OrderService.ts:330:24)\n    at processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async cancelOrder (/home/ditsdev158/My Backend Project2/src/controllers/OrderController.ts:137:24)","statusCode":400,"timestamp":"2026-06-10 14:44:42"}
 {"level":"error","message":"OrderController cancelOrder error: Order is already cancelled.","service":"ecommerce-api","stack":"Error: Order is already cancelled.\n    at createError (/home/ditsdev158/My Backend Project2/src/middlewares/error-handler.middleware.ts:61:17)\n    at cancelOrder (/home/ditsdev158/My Backend Project2/src/services/OrderService.ts:330:24)\n    at processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async cancelOrder (/home/ditsdev158/My Backend Project2/src/controllers/OrderController.ts:137:24)","statusCode":400,"timestamp":"2026-06-10 14:44:42"}
 {"level":"warn","message":"PATCH /orders/1/cancel 400 - 37ms","service":"ecommerce-api","timestamp":"2026-06-10 14:44:42"}
+{"level":"info","message":"Database connected successfully!","service":"ecommerce-api","timestamp":"2026-06-10 15:40:39"}
+{"level":"warn","message":"Redis not available ❌ - app will work without cache","service":"ecommerce-api","timestamp":"2026-06-10 15:40:39"}
+{"level":"info","message":"Server running on http://localhost:3000","service":"ecommerce-api","timestamp":"2026-06-10 15:40:39"}
+{"level":"info","message":"Database connected successfully!","service":"ecommerce-api","timestamp":"2026-06-10 15:43:37"}
+{"level":"info","message":"Redis connected ✅","service":"ecommerce-api","timestamp":"2026-06-10 15:43:37"}
+{"level":"info","message":"Server running on http://localhost:3000","service":"ecommerce-api","timestamp":"2026-06-10 15:43:37"}
+{"level":"info","message":"findAll CACHE MISS -> products:all:{\"in_stock\":false,\"page\":1,\"limit\":10}","service":"ecommerce-api","timestamp":"2026-06-10 15:44:19"}
+{"level":"info","message":"GET /products?page=1&limit=10 200 - 55ms","service":"ecommerce-api","timestamp":"2026-06-10 15:44:19"}
+{"level":"info","message":"findAll CACHE HIT  -> products:all:{\"in_stock\":false,\"page\":1,\"limit\":10}","service":"ecommerce-api","timestamp":"2026-06-10 15:44:37"}
+{"level":"info","message":"GET /products?page=1&limit=10 304 - 3ms","service":"ecommerce-api","timestamp":"2026-06-10 15:44:37"}
+{"level":"info","message":"findAll CACHE HIT  -> products:all:{\"in_stock\":false,\"page\":1,\"limit\":10}","service":"ecommerce-api","timestamp":"2026-06-10 15:44:39"}
+{"level":"info","message":"GET /products?page=1&limit=10 304 - 2ms","service":"ecommerce-api","timestamp":"2026-06-10 15:44:39"}
+{"level":"info","message":"findAll CACHE HIT  -> products:all:{\"in_stock\":false,\"page\":1,\"limit\":10}","service":"ecommerce-api","timestamp":"2026-06-10 15:44:40"}
+{"level":"info","message":"GET /products?page=1&limit=10 304 - 2ms","service":"ecommerce-api","timestamp":"2026-06-10 15:44:40"}
+{"level":"info","message":"findAll CACHE HIT  -> products:all:{\"in_stock\":false,\"page\":1,\"limit\":10}","service":"ecommerce-api","timestamp":"2026-06-10 15:44:41"}
+{"level":"info","message":"GET /products?page=1&limit=10 304 - 2ms","service":"ecommerce-api","timestamp":"2026-06-10 15:44:41"}
+{"level":"info","message":"findAll CACHE HIT  -> products:all:{\"in_stock\":false,\"page\":1,\"limit\":10}","service":"ecommerce-api","timestamp":"2026-06-10 15:44:41"}
+{"level":"info","message":"GET /products?page=1&limit=10 304 - 2ms","service":"ecommerce-api","timestamp":"2026-06-10 15:44:41"}
+{"level":"info","message":"findAll CACHE HIT  -> products:all:{\"in_stock\":false,\"page\":1,\"limit\":10}","service":"ecommerce-api","timestamp":"2026-06-10 15:44:41"}
+{"level":"info","message":"GET /products?page=1&limit=10 304 - 2ms","service":"ecommerce-api","timestamp":"2026-06-10 15:44:41"}
+{"level":"info","message":"findAll CACHE HIT  -> products:all:{\"in_stock\":false,\"page\":1,\"limit\":10}","service":"ecommerce-api","timestamp":"2026-06-10 15:44:42"}
+{"level":"info","message":"GET /products?page=1&limit=10 304 - 3ms","service":"ecommerce-api","timestamp":"2026-06-10 15:44:42"}
+{"level":"info","message":"findAll CACHE HIT  -> products:all:{\"in_stock\":false,\"page\":1,\"limit\":10}","service":"ecommerce-api","timestamp":"2026-06-10 15:44:42"}
+{"level":"info","message":"GET /products?page=1&limit=10 304 - 3ms","service":"ecommerce-api","timestamp":"2026-06-10 15:44:42"}
+{"level":"info","message":"findAll CACHE HIT  -> products:all:{\"in_stock\":false,\"page\":1,\"limit\":10}","service":"ecommerce-api","timestamp":"2026-06-10 15:44:42"}
+{"level":"info","message":"GET /products?page=1&limit=10 304 - 2ms","service":"ecommerce-api","timestamp":"2026-06-10 15:44:42"}
+{"level":"info","message":"Database connected successfully!","service":"ecommerce-api","timestamp":"2026-06-10 15:49:45"}
+{"level":"info","message":"Redis connected","service":"ecommerce-api","timestamp":"2026-06-10 15:49:46"}
+{"level":"info","message":"Server running on http://localhost:3000","service":"ecommerce-api","timestamp":"2026-06-10 15:49:46"}

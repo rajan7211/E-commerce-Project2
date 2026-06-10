@@ -10,6 +10,7 @@ import { loggerMiddleware, errorLogger } from "./middlewares/logger.middleware";
 import logger from "./config/logger.config";
 import orderRoutes from "./routes/order.routes";
 import addressRoutes from './routes/address.routes';
+import { connectRedis } from "./config/redis";
 
 
 
@@ -72,9 +73,11 @@ app.use(errorHandler);
 const PORT = process.env.PORT || 3000;
 
 AppDataSource.initialize()
-  .then(() => {
+  .then(async () => {
     logger.info("Database connected successfully!");
 
+    // connect Redis
+    await connectRedis();
 
     app.listen(PORT, () => {
       logger.info(`Server running on http://localhost:${PORT}`);

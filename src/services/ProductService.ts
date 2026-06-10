@@ -23,6 +23,7 @@ import {
 } from "../Interfaces/product.interface";
 import { ServiceResponse } from "../Interfaces/service-response.interface";
 import { createError } from "../middlewares/error-handler.middleware";
+import { getCache, setCache, clearProductCache } from "../config/redis";
 
 // Helper to generate image URLs
 const generateImageUrls = (files: Express.Multer.File[]): string[] => {
@@ -82,6 +83,9 @@ export const create = async (
 
     logger.info(`Product created: ${product.product_name} by user ${userId}`);
 
+    // invalidate product cache so new product appears in listings
+    await clearProductCache();
+
     return {
       success: true,
       message: ResponseMessage.PRODUCT_CREATED_SUCCESS,
@@ -115,33 +119,58 @@ export const findAll = async (
   params?: ProductQueryParams
 ): Promise<ServiceResponse<ProductListResponse>> => {
   try {
+    //  build a cache key 
+    const cacheKey = `products:all:${JSON.stringify(params || {})}`;
+
+    // check Redis first 
+    const cachedData = await getCache<ProductListResponse>(cacheKey);
+
+    if (cachedData) {
+      logger.info(`findAll CACHE HIT  -> ${cacheKey}`);
+      return {
+        success: true,
+        message: ResponseMessage.SUCCESS,
+        data: cachedData,
+        statusCode: HttpStatus.OK,
+      };
+    }
+
+    // CACHE MISS  (we must go to the database)
+    logger.info(`findAll CACHE MISS -> ${cacheKey}`);
+
     const { products, total } = await findAllProductsRepo(params);
     logger.debug(`ProductService findAll returned ${total} products`);
+
+    const responseData: ProductListResponse = {
+      products: products.map((product) => ({
+        product_id: product.product_id,
+        product_name: product.product_name,
+        product_price: product.product_price,
+        product_description: product.product_description,
+        stock: product.stock,
+        images: product.images,
+        category: {
+          id: product.category.id,
+          category_name: product.category.category_name,
+        },
+        store: {
+          id: product.store.id,
+          store_name: product.store.store_name,
+        },
+      })),
+      total,
+      page: params?.page || 1,
+      limit: params?.limit || 10,
+    };
+
+    // save in Redis for next time 
+    // 5 minutes (auto expire)
+    await setCache(cacheKey, responseData, 300);
 
     return {
       success: true,
       message: ResponseMessage.SUCCESS,
-      data: {
-        products: products.map((product) => ({
-          product_id: product.product_id,
-          product_name: product.product_name,
-          product_price: product.product_price,
-          product_description: product.product_description,
-          stock: product.stock,
-          images: product.images,
-          category: {
-            id: product.category.id,
-            category_name: product.category.category_name,
-          },
-          store: {
-            id: product.store.id,
-            store_name: product.store.store_name,
-          },
-        })),
-        total,
-        page: params?.page || 1,
-        limit: params?.limit || 10,
-      },
+      data: responseData,
       statusCode: HttpStatus.OK,
     };
   } catch (error: any) {
@@ -316,6 +345,9 @@ export const update = async (
     const updatedProduct = await updateProductRepo(id, updateData);
     logger.info(`ProductService update succeeded for product ${id} by user ${userId}`);
 
+    // invalidate product cache so updated data is served fresh
+    await clearProductCache();
+
     return {
       success: true,
       message: ResponseMessage.PRODUCT_UPDATED_SUCCESS,
@@ -370,6 +402,9 @@ export const deleteById = async (
     await deleteProductRepo(id);
     logger.info(`ProductService deleteById succeeded for product ${id} by user ${userId}`);
 
+    // invalidate product cache so deleted product disappears from listings
+    await clearProductCache();
+
     return {
       success: true,
       message: ResponseMessage.PRODUCT_DELETED_SUCCESS,
@@ -408,6 +443,9 @@ export const updateStock = async (
 
     const updatedProduct = await updateStockRepo(productId, quantity);
     logger.info(`ProductService updateStock succeeded for product ${productId} by user ${userId} quantity ${quantity}`);
+
+    // invalidate product cache so stock changes are reflected
+    await clearProductCache();
 
     return {
       success: true,
