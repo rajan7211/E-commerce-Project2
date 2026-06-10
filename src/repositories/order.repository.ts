@@ -6,7 +6,6 @@ import { Payment } from "../entities/Payment";
 import { Shipping } from "../entities/Shipping";
 import { Track } from "../entities/Track";
 import logger from "../config/logger.config";
-import { statSync } from "node:fs";
 
 
 
@@ -45,7 +44,7 @@ export const findOrderByID = async (id: number): Promise<Order | null> => {
         "payments",
         "shipping",
         "tracks",
-        "users",
+        "user",
       ],
     });
     if (order) {
@@ -176,12 +175,13 @@ export const createShippingWithTransaction = async (
 export const createTrackWithTransaction = async (
   queryRunner: QueryRunner,
   orderId: number,
+  status: string = "pending",
 ): Promise<Track> => {
   try {
     const repository = queryRunner.manager.getRepository(Track);
     const track = repository.create({
       order: { id: orderId },
-      status: "pending",
+      status,
     });
     const savedTrack = await repository.save(track);
 
@@ -213,6 +213,52 @@ export const updateOrderStatus = async (
         throw error;
     }
 }
+
+// update order status with Transaction
+export const updateOrderStatusWithTransaction = async (
+  queryRunner: QueryRunner,
+  id: number,
+  status: string,
+): Promise<void> => {
+  try {
+    await queryRunner.manager.update(Order, id, { status });
+
+    logger.info(`OrderRepository updateOrderStatusWithTransaction succeeded for 
+            order ${id} , new status : ${status}`);
+  } catch (error: any) {
+    logger.error(
+      "OrderRepository updateOrderStatusWithTransaction error:",
+      error,
+    );
+    throw error;
+  }
+};
+
+// update payment status with Transaction
+export const updatePaymentStatusWithTransaction = async (
+  queryRunner: QueryRunner,
+  orderId: number,
+  transactionStatus: string,
+): Promise<void> => {
+  try {
+    await queryRunner.manager.update(
+      Payment,
+      { order: { id: orderId } },
+      { transaction_status: transactionStatus },
+    );
+
+    logger.info(`OrderRepository updatePaymentStatusWithTransaction succeeded for 
+            order ${orderId} , new status : ${transactionStatus}`);
+  } catch (error: any) {
+    logger.error(
+      "OrderRepository updatePaymentStatusWithTransaction error:",
+      error,
+    );
+    throw error;
+  }
+};
+
+
 
 
 

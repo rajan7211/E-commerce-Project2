@@ -8,9 +8,12 @@ import {
   createPaymentWithTransaction,
   createShippingWithTransaction,
   createTrackWithTransaction,
+  updateOrderStatusWithTransaction,
+  updatePaymentStatusWithTransaction,
 } from "../repositories/order.repository";
 import { getCartByUserId } from "../repositories/cart.repository";
 import { productFindById } from "../repositories/product.repository";
+import { findAddressByIdAndUser } from "../repositories/address.repository";
 import { ResponseMessage } from "../enums/response-message.enum";
 import { HttpStatus } from "../enums/http-status.enum";
 import {
@@ -79,6 +82,27 @@ export const placeOrder = async (
 
     await queryRunner.connect();
     await queryRunner.startTransaction();
+
+    // validate shipping address - must exist and belong to this user
+    const address = await findAddressByIdAndUser(userId, data.address_id);
+
+    if (!address) {
+      throw createError(
+        ResponseMessage.ADDRESS_NOT_FOUND,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    // build address snapshot string (kept on shipping record permanently)
+    const shippingAddress = [
+      address.street,
+      address.city,
+      address.state,
+      address.postal_code,
+      address.country,
+    ]
+      .filter(Boolean)
+      .join(", ");
 
     // get user Cart
     const cart = await getCartByUserId(userId);
@@ -154,11 +178,11 @@ export const placeOrder = async (
       transactionId,
     );
 
-    // create shipping Record
+    // create shipping Record (address snapshot at time of order)
     await createShippingWithTransaction(
       queryRunner,
       order.id,
-      data.shipping_address,
+      shippingAddress,
     );
 
     // craete tracking record
@@ -192,7 +216,9 @@ export const placeOrder = async (
       statusCode: HttpStatus.CREATED,
     };
   } catch (error: any) {
-    await queryRunner.rollbackTransaction();
+    if (queryRunner.isTransactionActive) {
+      await queryRunner.rollbackTransaction();
+    }
     logger.error(`OrderService placeOrder error :`, error);
 
     throw error;
@@ -267,6 +293,106 @@ export const getOrderDetails = async (
   } catch (error: any) {
     logger.error("OrderService getOrderDetails error:", error);
     throw error;
+  }
+};
+
+// Cancel Order
+export const cancelOrder = async (
+  userId: number,
+  orderId: number,
+): Promise<ServiceResponse<OrderResponse>> => {
+  const queryRunner = AppDataSource.createQueryRunner();
+
+  try {
+    logger.info(
+      `OrderService cancelOrder started for order ${orderId} by user ${userId}`,
+    );
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    const order = await findOrderByID(orderId);
+
+    if (!order) {
+      throw createError(ResponseMessage.ORDER_NOT_FOUND, HttpStatus.NOT_FOUND);
+    }
+
+    // check ownership
+    if (order.user.id !== userId) {
+      throw createError(
+        ResponseMessage.UNAUTHORIZED_ORDER_ACCESS,
+        HttpStatus.FORBIDDEN,
+      );
+    }
+
+    // check order status - only pending / processing can be cancelled
+    if (order.status === "cancelled") {
+      throw createError(
+        ResponseMessage.ORDER_ALREADY_CANCELLED,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    if (order.status === "shipped" || order.status === "delivered") {
+      throw createError(
+        ResponseMessage.ORDER_CANNOT_BE_CANCELLED,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    // restore product stock
+    for (const item of order.items) {
+      const product = await productFindById(item.product.product_id);
+      if (product) {
+        const newStock = product.stock + item.quantity;
+        await queryRunner.manager.update(Product, product.product_id, {
+          stock: newStock,
+        });
+      }
+    }
+
+    // update order status to cancelled
+    await updateOrderStatusWithTransaction(queryRunner, order.id, "cancelled");
+
+    // mark payment as refunded (if it was successful)
+    if (order.payments?.[0]?.transaction_status === "success") {
+      await updatePaymentStatusWithTransaction(
+        queryRunner,
+        order.id,
+        "refunded",
+      );
+    }
+
+    // add tracking record for cancellation
+    await createTrackWithTransaction(queryRunner, order.id, "cancelled");
+
+    await queryRunner.commitTransaction();
+
+    // fetch updated order for response
+    const updatedOrder = await findOrderByID(order.id);
+
+    if (!updatedOrder) {
+      throw createError(ResponseMessage.ORDER_NOT_FOUND, HttpStatus.NOT_FOUND);
+    }
+
+    logger.info(
+      `OrderService cancelOrder succeeded for order ${orderId} by user ${userId}`,
+    );
+
+    return {
+      success: true,
+      message: ResponseMessage.ORDER_CANCELLED_SUCCESS,
+      data: formatOrder(updatedOrder),
+      statusCode: HttpStatus.OK,
+    };
+  } catch (error: any) {
+    if (queryRunner.isTransactionActive) {
+      await queryRunner.rollbackTransaction();
+    }
+    logger.error("OrderService cancelOrder error:", error);
+    throw error;
+  } finally {
+    await queryRunner.release();
   }
 };
 

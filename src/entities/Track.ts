@@ -8,7 +8,7 @@ export class Track {
 
   @Column({
     type: "enum",
-    enum: ["pending", "packed", "shipped", "delivered"],
+    enum: ["pending", "packed", "shipped", "delivered", "cancelled"],
   })
   status: string;
 

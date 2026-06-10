@@ -74,8 +74,11 @@ export enum ResponseMessage {
   ORDERS_RETRIEVED_SUCCESS = "Orders retrieved successfully.",
   UNAUTHORIZED_ORDER_ACCESS = "You can only access your own orders.",
   CART_EMPTY_CANNOT_ORDER = "Cart is empty. Add items before placing an order.",
+  ORDER_CANCELLED_SUCCESS = "Order cancelled successfully.",
+  ORDER_ALREADY_CANCELLED = "Order is already cancelled.",
+  ORDER_CANNOT_BE_CANCELLED = "Order cannot be cancelled once it is shipped or delivered.",
 
-  
+  //address
  ADDRESS_CREATED_SUCCESS = "Address created successfully.",
   ADDRESSES_RETRIEVED_SUCCESS = "Addresses retrieved successfully.",
   ADDRESS_RETRIEVED_SUCCESS = "Address retrieved successfully.",
@@ -92,3 +95,5 @@ export enum ResponseMessage {
   INTERNAL_ERROR = "Internal server error.",
   SUCCESS = "Success.",
 }
+
+

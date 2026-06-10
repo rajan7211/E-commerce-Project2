@@ -17,12 +17,19 @@ export class Address{
     id : number;
 
 @Column ({type : "text", nullable : true})
-address : string;
+street : string;
+
 @Column ({ type : "text", nullable : true})
 city : string;
 
 @Column ({ type : "text",nullable : true})
 state :string;
+
+@Column ({ type : "text", nullable : true})
+postal_code : string;
+
+@Column ({ type : "text", nullable : true})
+country : string;
 
 @ManyToOne(()=> User, (user)=> user.addresses)
 user : User;
@@ -33,6 +40,8 @@ created_at: Date;
 updated_at: Date;
 
 }
+
+
 
 
 

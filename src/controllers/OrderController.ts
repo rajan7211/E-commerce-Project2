@@ -4,6 +4,7 @@ import {
   placeOrder as placeOrderService,
   getUserOrders as getUserOrdersService,
   getOrderDetails as getOrderDetailsService,
+  cancelOrder as cancelOrderService,
 } from "../services/OrderService";
 import { CreateOrderRequestBody } from "../Interfaces/order.interface";
 
@@ -110,6 +111,45 @@ export const getOrderDetails = async (req : Request , res: Response) => {
             success : false,
             message : error.message,
          });
+    }
+};
+
+
+// cancel order
+export const cancelOrder = async (req : Request , res : Response) => {
+    try {
+        const userId = req.user?.userId;
+        if (!userId) {
+            return res.status(401).json({
+                success : false,
+                message : "Unauthorized",
+            });
+        }
+
+        const orderId = parseInt(req.params.orderId as string);
+        if (isNaN(orderId)) {
+            return res.status(400).json({
+                success : false,
+                message : "Invalid Order ID",
+            });
+        }
+
+        const result = await cancelOrderService(userId, orderId);
+
+        res.status(result.statusCode).json({
+            success : result.success,
+            message : result.message,
+            data : result.data,
+        });
+    } catch (error : any) {
+        logger.error("OrderController cancelOrder error:" , error);
+
+        const statusCode = error.statusCode || 400;
+
+        res.status(statusCode).json({
+            success : false,
+            message : error.message,
+        });
     }
 };
 

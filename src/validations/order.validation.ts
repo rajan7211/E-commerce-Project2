@@ -3,13 +3,15 @@ import { validationMessages } from "./messages";
 
 export const orderValidation = {
   createOrder: Joi.object({
-    shipping_address: Joi.string()
+    address_id: Joi.number()
+      .integer()
+      .positive()
       .required()
-      .min(5)
       .messages({
-        "string.empty": validationMessages.STORE.DESCRIPTION.MAX, 
-        "string.min": "Shipping address is too short",
-        "any.required": "Shipping address is required",
+        "number.base": "Address ID must be a number",
+        "number.integer": "Address ID must be an integer",
+        "number.positive": "Address ID must be a positive number",
+        "any.required": "Address ID is required",
       }),
 
     payment_method: Joi.string()

@@ -365,8 +365,16 @@ OrderItem: {
           properties: {
             id: { type: "integer", example: 1 },
             amount: { type: "number", example: 1999.98 },
-            payment_method: { type: "string", example: "cod" },
-            transaction_status: { type: "string", example: "success" },
+            payment_method: {
+              type: "string",
+              enum: ["cod", "card", "paypal"],
+              example: "cod",
+            },
+            transaction_status: {
+              type: "string",
+              enum: ["pending", "success", "failed", "refunded"],
+              example: "success",
+            },
             transaction_id: { type: "string", example: "TXN-123456789" },
           },
         },
@@ -381,7 +389,11 @@ OrderItem: {
           type: "object",
           properties: {
             id: { type: "integer", example: 1 },
-            status: { type: "string", example: "pending", enum: ["pending", "packed", "shipped", "delivered"] },
+            status: {
+              type: "string",
+              example: "pending",
+              enum: ["pending", "packed", "shipped", "delivered", "cancelled"],
+            },
             date_time: { type: "string", format: "date-time" },
           },
         },
@@ -399,21 +411,31 @@ OrderItem: {
               type: "array",
               items: { $ref: "#/components/schemas/OrderItem" },
             },
-            payment: { $ref: "#/components/schemas/Payment" },
-            shipping: { $ref: "#/components/schemas/Shipping" },
-            tracking: { $ref: "#/components/schemas/Track" },
+            payment: {
+              allOf: [{ $ref: "#/components/schemas/Payment" }],
+              nullable: true,
+            },
+            shipping: {
+              allOf: [{ $ref: "#/components/schemas/Shipping" }],
+              nullable: true,
+            },
+            tracking: {
+              allOf: [{ $ref: "#/components/schemas/Track" }],
+              nullable: true,
+            },
             created_at: { type: "string", format: "date-time" },
             updated_at: { type: "string", format: "date-time" },
           },
         },
         CreateOrderRequest: {
           type: "object",
-          required: ["shipping_address", "payment_method"],
+          required: ["address_id", "payment_method"],
           properties: {
-            shipping_address: {
-              type: "string",
-              example: "123 Main St, City, Country",
-              minLength: 5,
+            address_id: {
+              type: "integer",
+              example: 1,
+              description:
+                "ID of one of the user's saved addresses (see /addresses API)",
             },
             payment_method: {
               type: "string",
@@ -430,6 +452,36 @@ OrderItem: {
               items: { $ref: "#/components/schemas/Order" },
             },
             total: { type: "integer", example: 5 },
+          },
+        },
+        OrderSuccessResponse: {
+          type: "object",
+          properties: {
+            success: { type: "boolean", example: true },
+            message: { type: "string", example: "Order placed successfully." },
+            data: { $ref: "#/components/schemas/Order" },
+          },
+        },
+        OrderListSuccessResponse: {
+          type: "object",
+          properties: {
+            success: { type: "boolean", example: true },
+            message: {
+              type: "string",
+              example: "Orders retrieved successfully.",
+            },
+            data: { $ref: "#/components/schemas/OrderListResponse" },
+          },
+        },
+        CancelOrderResponse: {
+          type: "object",
+          properties: {
+            success: { type: "boolean", example: true },
+            message: {
+              type: "string",
+              example: "Order cancelled successfully.",
+            },
+            data: { $ref: "#/components/schemas/Order" },
           },
         },
         
@@ -464,3 +516,5 @@ OrderItem: {
 };
 
 export const specs = swaggerJsdoc(options);
+
+

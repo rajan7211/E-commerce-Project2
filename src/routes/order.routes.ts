@@ -6,11 +6,11 @@ import {
   placeOrder,
   getUserOrders,
   getOrderDetails,
+  cancelOrder,
 } from "../controllers/OrderController";
 
 const router = Router();
 
-// All order routes require authentication
 router.use(authenticate);
 
 /**
@@ -19,7 +19,7 @@ router.use(authenticate);
  *   post:
  *     summary: Place a new order
  *     tags: [Orders]
- *     description: Create a new order from the current cart. Stock is deducted and cart is cleared automatically.
+ *     description: Create a new order from the current cart using a saved address (address_id). Stock is deducted and cart is cleared automatically.
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -164,6 +164,72 @@ router.get("/", getUserOrders);
  *               $ref: '#/components/schemas/ErrorResponse'
  */
 router.get("/:orderId", getOrderDetails);
+
+/**
+ * @swagger
+ * /orders/{orderId}/cancel:
+ *   patch:
+ *     summary: Cancel an order
+ *     tags: [Orders]
+ *     description: Cancel an order by ID. Only pending or processing orders can be cancelled. Stock is restored and payment is marked as refunded automatically.
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: orderId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Order ID
+ *         example: 1
+ *     responses:
+ *       200:
+ *         description: Order cancelled successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: "Order cancelled successfully."
+ *                 data:
+ *                   $ref: '#/components/schemas/Order'
+ *       400:
+ *         description: Order already cancelled or cannot be cancelled (shipped/delivered)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       403:
+ *         description: Unauthorized access to this order
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       404:
+ *         description: Order not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ */
+router.patch("/:orderId/cancel", cancelOrder);
 
 export default router;
 

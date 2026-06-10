@@ -1,5 +1,5 @@
 export interface CreateOrderRequestBody {
-  shipping_address: string;
+  address_id: number;
   payment_method: string; 
 }
 
@@ -55,6 +55,8 @@ export interface OrderListResponse {
   orders: OrderResponse[];
   total: number;
 }
+
+
 
 
 

@@ -15,7 +15,7 @@ export class Payment {
 
   @Column({
     type: "enum",
-    enum: ["pending", "success", "failed"],
+    enum: ["pending", "success", "failed", "refunded"],
   })
   transaction_status: string;
 
@@ -28,6 +28,8 @@ export class Payment {
   @CreateDateColumn()
   created_at: Date;
 }
+
+
 
 
 
