@@ -75,6 +75,16 @@ export enum ResponseMessage {
   UNAUTHORIZED_ORDER_ACCESS = "You can only access your own orders.",
   CART_EMPTY_CANNOT_ORDER = "Cart is empty. Add items before placing an order.",
 
+  
+ ADDRESS_CREATED_SUCCESS = "Address created successfully.",
+  ADDRESSES_RETRIEVED_SUCCESS = "Addresses retrieved successfully.",
+  ADDRESS_RETRIEVED_SUCCESS = "Address retrieved successfully.",
+  ADDRESS_UPDATED_SUCCESS = "Address updated successfully.",
+  ADDRESS_DELETED_SUCCESS = "Address deleted successfully.",
+
+  ADDRESS_NOT_FOUND = "Address not found.",
+  UNAUTHORIZED_ADDRESS_ACCESS = "You can only manage your own addresses.",
+
   VALIDATION_ERROR = "Validation error.",
   PASSWORDS_DO_NOT_MATCH = "Passwords do not match.",
   PASSWORD_REQUIRED = "Password is required.",

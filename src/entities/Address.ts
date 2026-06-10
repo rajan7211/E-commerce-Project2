@@ -2,7 +2,11 @@ import {
     Entity, 
     PrimaryGeneratedColumn, 
     Column,
-    ManyToOne} 
+    ManyToOne,
+    CreateDateColumn, UpdateDateColumn
+    
+
+} 
     from "typeorm";
 
 import { User } from "./User";
@@ -22,9 +26,15 @@ state :string;
 
 @ManyToOne(()=> User, (user)=> user.addresses)
 user : User;
+@CreateDateColumn()
+created_at: Date;
 
+@UpdateDateColumn()
+updated_at: Date;
 
 }
+
+
 
 
 

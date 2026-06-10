@@ -9,7 +9,7 @@ import cartRoutes from './routes/cart.routes';
 import { loggerMiddleware, errorLogger } from "./middlewares/logger.middleware";
 import logger from "./config/logger.config";
 import orderRoutes from "./routes/order.routes";
-
+import addressRoutes from './routes/address.routes';
 
 
 
@@ -51,7 +51,7 @@ app.use("/products" , productRoutes);
 app.use("/stores" , storeRoutes);
 app.use("/cart", cartRoutes);
 app.use("/orders" , orderRoutes);
-
+app.use("/addresses", addressRoutes);
 
 
 
